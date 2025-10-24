@@ -15,3 +15,4 @@
 ### David
 - Kickoff Meeting mit AB vereinbaren
 - Swagger Ordner / Source Location einrichten im Repo
+- (During Development) Ordner TreeView Struktur aufbauen und maintainen

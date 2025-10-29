@@ -11,7 +11,6 @@ swaggerinfo = SwaggerDoc(app, Api(app), "/swagger-docs", "/spec")
 swaggerinfo.setup()
 swaggerinfo.addResource(UserModel, "/temp")
 
-# Swagger base-path fuer die yml Datei
 @app.route("/spec")
 def spec():
     swag = swagger(app, from_file_keyword="swagger_from_file")

@@ -7,7 +7,7 @@ from Controller.SwaggerController import SwaggerDoc
 
 app = Flask(__name__)
 
-swaggerinfo = SwaggerDoc(app, Api(app), "/swagger-docs", "/spec")
+swaggerinfo = SwaggerDoc(app, Api(app), "/swagger-docs", "https://petstore.swagger.io/v2/swagger.json")
 swaggerinfo.setup()
 swaggerinfo.addResource(UserModel, "/temp")
 

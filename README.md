@@ -1,4 +1,5 @@
 # Digitale-Wortkette
+Dieses Projekt nutzt für das Frontend Flutter in dem Folgendem [Repository](https://github.com/Manofward/Flutter) mit einer minimal demo zur nutzung von Flutter und Flask.
 
 ## Requirements pre-dev:
 - Webserver

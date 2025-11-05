@@ -29,7 +29,7 @@
   - Gegenseitiges Code-Review
   - Contribute.md erstellen (Front- und Backend)
   - Feingranulare Commits d.h. [Schlagwort]"Was habe ich gemacht? / Was wurde verändert?"
-  - Coding Conventions für Python und Dart
+  - Coding Conventions für Python und Dart und den Endpoints der API
 - [ ] User Stories festlegen
   - Features für Front- und Backend
 - [ ] Ticketsystem mit Super Productivity (Primär GitHub Issues)

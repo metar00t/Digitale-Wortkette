@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 
 WORKDIR /python-docker
-
+EXPOSE 5000
 COPY requirements.txt requirements.txt
 RUN python3 -m pip install --upgrade pip
 RUN pip install -r requirements.txt

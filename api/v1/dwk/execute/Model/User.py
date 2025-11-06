@@ -1,7 +1,8 @@
-from flask_restful import Resource
+class User:
+    def __init__(self, nickname):
+        self.nickname = nickname
 
-class UserModel(Resource):
-    def get(self):
-        """
-        swagger_from_file: api-documentation/specs.yml
-        """
+    def getnickname(self):
+        return {
+            "username" : self.nickname
+        }

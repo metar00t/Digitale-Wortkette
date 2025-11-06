@@ -14,7 +14,7 @@
 - Backend: Adams
 	- Docker-Container
 - Frontend: Meyer
-- (API) Schnittstellen Spezifikation: Meyer
+- (API) Schnittstellen Spezifikation: Adams
 - Server Infrastruktur (FiSi Fragen): Adams
 - Projektmanagement: TBD
 

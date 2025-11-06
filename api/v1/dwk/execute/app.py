@@ -1,15 +1,17 @@
-from flask import Flask, render_template, jsonify
-from flask_restful import Api
+from flask import Flask, jsonify, request
+from flask_restful import Api, http_status_message
 from flask_swagger import swagger
 
-from Model.User import *
+from Model.User import User
+from api.v1.dwk.execute.Model.Lobby import Lobby
+from swagger.classes.userdoc import UserDoc
 from Controller.SwaggerController import SwaggerDoc
 
 app = Flask(__name__)
 
-swaggerinfo = SwaggerDoc(app, Api(app), "/swagger-docs", "https://petstore.swagger.io/v2/swagger.json")
+swaggerinfo = SwaggerDoc(app, Api(app), "/swagger", "/spec")
 swaggerinfo.setup()
-swaggerinfo.addResource(UserModel, "/temp")
+swaggerinfo.addResource(UserDoc, "/")
 
 @app.route("/spec")
 def spec():
@@ -19,9 +21,11 @@ def spec():
     return jsonify(swag)
 
 # Hier wird der Main Code stehen, der ausgeführt wird
-@app.route("/api/v1/dwk/home")
-def start():
-    return render_template("landingpage.html")
+@app.get("/home")
+def home():
+    lobby = Lobby(5540,"john","Tiere",0)
+    #lobby2 = Lobby(5541, "jane", "Pflanzen", 4)
+    return jsonify(lobby.getLobbyInfo())
 
 if __name__ == '__main__':
     app.run(debug = True)

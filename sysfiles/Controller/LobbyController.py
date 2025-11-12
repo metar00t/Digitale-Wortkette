@@ -1,3 +1,4 @@
+from flask import request
 from sysfiles.Controller.QRCodeController import QrCodeController
 from sysfiles.Model.Lobby import *
 from sysfiles.Model.Player import Player

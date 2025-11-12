@@ -4,7 +4,7 @@ FROM python:3.13-slim
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
-WORKDIR /python-docker
+WORKDIR /docker-digitale-wortkette
 
 RUN python3 -m pip install --upgrade pip
 

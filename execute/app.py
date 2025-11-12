@@ -23,15 +23,11 @@ def spec():
 # Hier wird der Main Code stehen, der ausgeführt wird
 @app.get("/home")
 def home():
-    return lobbyController.getLobbyInfo()
+    return lobbyController.getLobbyList()
 
-@app.route("/test", methods=['GET', 'POST'])
+@app.post("/test")
 def test():
-    if request.method == 'GET':
-        return lobbyController.getLobbyInfo()
-    elif request.method == 'POST':
-        return lobbyController.createLobby()
-    return http_status_message(200)
+    return lobbyController.createLobby()
 
 if __name__ == '__main__':
     app.run(debug = True)

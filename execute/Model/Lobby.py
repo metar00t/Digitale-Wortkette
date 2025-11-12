@@ -14,14 +14,14 @@ class Lobby:
         self.maxPlayers = 0
         self.maxGameLength = 0
 
-    def setSubject(self):
-        self.subject = request.form.get('subject')
+    def setSubject(self, subject):
+        self.subject = subject
 
-    def setMaxPlayers(self):
-        self.maxPlayers = request.form.get('maxPlayers')
+    def setMaxPlayers(self, maxPlayers):
+        self.maxPlayers = maxPlayers
 
-    def setMaxGameLength(self):
-        self.maxGameLength = request.form.get('maxGameLength')
+    def setMaxGameLength(self, maxGameLength):
+        self.maxGameLength = maxGameLength
 
     def getLobbyID(self):
         return self.lobbyID

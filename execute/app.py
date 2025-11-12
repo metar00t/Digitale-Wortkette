@@ -25,7 +25,7 @@ def spec():
 def home():
     return lobbyController.getLobbyList()
 
-@app.post("/test")
+@app.post("/host-lobby")
 def test():
     return lobbyController.createLobby()
 

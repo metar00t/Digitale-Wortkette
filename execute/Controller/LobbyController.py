@@ -20,7 +20,7 @@ class LobbyController:
             "maxGameLength" : self.lobby.setMaxGameLength(request.form.get('maxGameLength'))
         }
         self.createdLobbies.append(createdLobby)
-        return self.createdLobbies
+        return createdLobby
 
     def getLobbyList(self):
         lobbyList = []

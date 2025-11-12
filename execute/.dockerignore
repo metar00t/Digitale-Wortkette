@@ -1,0 +1,8 @@
+.git
+Documentation/
+Protokolle/
+README.md
+.gitignore
+LICENSE
+CONTRIBUTING.md
+*.md

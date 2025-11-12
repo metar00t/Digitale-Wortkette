@@ -2,9 +2,9 @@ from flask import Flask, jsonify, request
 from flask_restful import Api, http_status_message
 from flask_swagger import swagger
 
-from Controller.LobbyController import LobbyController
-from swagger.classes.userdoc import UserDoc
-from Controller.SwaggerController import SwaggerDoc
+from sysfiles.Controller.LobbyController import LobbyController
+from sysfiles.swagger.classes.userdoc import UserDoc
+from sysfiles.Controller.SwaggerController import SwaggerDoc
 
 app = Flask(__name__)
 

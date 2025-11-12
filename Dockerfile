@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1
 FROM python:3.13-slim
 
-ENV FLASK_APP=execute/app.py
+ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 WORKDIR /python-docker
 
 RUN python3 -m pip install --upgrade pip
 
-COPY execute/requirements.txt requirements.txt
+COPY requirements.txt requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 

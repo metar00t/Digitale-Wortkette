@@ -1,6 +1,6 @@
-from execute.Controller.QRCodeController import QrCodeController
-from execute.Model.Lobby import *
-from execute.Model.Player import Player
+from sysfiles.Controller.QRCodeController import QrCodeController
+from sysfiles.Model.Lobby import *
+from sysfiles.Model.Player import Player
 
 class LobbyController:
     def __init__(self):

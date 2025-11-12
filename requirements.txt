@@ -1,3 +1,4 @@
+django-qrcode
 Flask~=3.1.2
 Flask-RESTful~=0.3.10
 flask-swagger~=0.2.14

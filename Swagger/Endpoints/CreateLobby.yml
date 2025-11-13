@@ -1,0 +1,32 @@
+Create a new Lobby
+---
+tags:
+  - lobby
+parameters:
+  - in: body
+    name: JSON
+    schema:
+      id: CreateLobby
+      required:
+        - subject
+        - maxPlayers
+        - maxGameLength
+      properties:
+        lobbyID:
+          type: integer
+          description: index for each individual Lobby
+        subject:
+          type: string
+          description: Topic of the Game Session
+        qrcode:
+          type: string
+          description: qrcode template to render as svg
+        maxPlayers:
+          type: integer
+          description: Sets the maximum Amount of Players that can join the Lobby
+        maxGameLength:
+          type: integer
+          description: Sets the maximum Length of the Game
+responses:
+  200:
+    description: Lobby created

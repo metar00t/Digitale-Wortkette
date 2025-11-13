@@ -8,15 +8,15 @@ class SwaggerDoc:
         self.api_url = api_url
 
     def setup(self):
-        swaggerui_blueprint = get_swaggerui_blueprint(
+        swaggerUIBlueprint = get_swaggerui_blueprint(
             self.swagger_url,  # Endpoint, an der die Swagger UI Oberflaeche ausgegeben wird
             self.api_url,
             config={  # (Optional) Swagger UI config overrides
                 'app_name': "Digitale Wortkette"
             }
         )
-        self.app.register_blueprint(swaggerui_blueprint)
+        self.app.register_blueprint(swaggerUIBlueprint)
 
-    def addResource(self, model, endpointformodel):
+    def addResource(self, model, endpointForModel):
         # Ressourcen fuer die Swagger Dokumentation werden hinzugefuegt
-        self.api.add_resource(model, endpointformodel)
+        self.api.add_resource(model, endpointForModel)

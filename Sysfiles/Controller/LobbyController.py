@@ -1,14 +1,14 @@
 from flask import request
-from sysfiles.Controller.QRCodeController import QrCodeController
-from sysfiles.Model.Lobby import *
-from sysfiles.Model.Player import Player
+from Sysfiles.Controller.QRCodeController import QrCodeController
+from Sysfiles.Model.Lobby import Lobby
+from Sysfiles.Model.Player import Player
 
 class LobbyController:
     def __init__(self):
         self.player = None
         self.lobby = None
-        self.createdLobbies = []
         self.qr = None
+        self.createdLobbies = []
 
     def createLobby(self):
         self.lobby = Lobby()
@@ -34,12 +34,34 @@ class LobbyController:
             lobbyList.append(lobbyInfo)
         return lobbyList
 
-    def getConnectedPlayers(self):
+    def playerJoins(self):
         self.player = Player()
-        return {
+       # self.player.setNickname(request.form['nickname'])
+        self.player.setNickname(request.form.get('nickname'))
+        self.player.setStatus(request.form.get('readyPlayer'))
+        playerList = []
+        player = {
             "username" : self.player.getNickname(),
-            "readyPlayer" : self.player.getStatus()
+            "isPlayerReady" : self.player.getStatus()
         }
+        self.lobby.addPlayer(player)
+        playerList.append(player)
+        return playerList
+
+    def getPlayerList(self):
+        playerList = []
+        if self.lobby is None:
+            return [{}]
+        elif not self.lobby.playerList:
+            return [{}]
+        for data in self.lobby.playerList:
+            playerInfo = {
+                "username" : data["username"],
+                "isPlayerReady" : data["isPlayerReady"]
+            }
+            playerList.append(playerInfo)
+        return playerList
+
 
     def getLobbySettings(self):
         if self.lobby is None:

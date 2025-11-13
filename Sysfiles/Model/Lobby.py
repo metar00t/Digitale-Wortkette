@@ -12,6 +12,7 @@ class Lobby:
         self.subject = ""
         self.maxPlayers = 0
         self.maxGameLength = 0
+        self.playerList = []
 
     def setSubject(self, subject):
         self.subject = subject
@@ -28,9 +29,6 @@ class Lobby:
     def getLobbyCode(self):
         return self.lobbyCode
 
-    def getHostName(self):
-        return self.hostName
-
     def getSubject(self):
         return self.subject
 
@@ -39,3 +37,6 @@ class Lobby:
 
     def getMaxGameLength(self):
         return self.maxGameLength
+
+    def addPlayer(self, player):
+        self.playerList.append(player)

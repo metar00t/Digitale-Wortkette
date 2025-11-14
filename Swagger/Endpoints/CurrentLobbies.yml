@@ -1,7 +1,0 @@
-Find active Lobbies
----
-tags:
-  - lobby
-responses:
-  200:
-    description: JSON Array List of Current Lobbies

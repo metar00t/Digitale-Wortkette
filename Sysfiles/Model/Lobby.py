@@ -8,7 +8,6 @@ class Lobby:
         self.lobbyID = Lobby._maxLobbyID + 1
         Lobby._maxLobbyID += 1
         Lobby._lobbyList.append(self.lobbyID)
-        self.lobbyCode = random.randint(0 , 999)
         self.subject = ""
         self.maxPlayers = 0
         self.maxGameLength = 0
@@ -25,9 +24,6 @@ class Lobby:
 
     def getLobbyID(self):
         return self.lobbyID
-
-    def getLobbyCode(self):
-        return self.lobbyCode
 
     def getSubject(self):
         return self.subject

@@ -1,6 +1,6 @@
 from flask_restful import Resource
 
-class LobbyDoc(Resource):
+class HostSpecification(Resource):
     def post(self):
         """
         swagger_from_file: ./Swagger/Endpoints/CreateLobby.yml
@@ -8,5 +8,5 @@ class LobbyDoc(Resource):
 
     def get(self):
         """
-        swagger_from_file: ./Swagger/Endpoints/CurrentLobbies.yml
+        swagger_from_file: ./Swagger/Endpoints/PlayersInLobby.yml
         """

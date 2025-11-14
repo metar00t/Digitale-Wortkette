@@ -1,0 +1,9 @@
+List of Connected Players in Lobby and their current Status
+---
+tags:
+  - Lobby
+responses:
+  200:
+    description: Playerlist found
+  204:
+    description: No Playerlist found

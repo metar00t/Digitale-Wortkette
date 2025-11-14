@@ -1,5 +1,3 @@
-from flask import request
-
 class Player:
     _userID = 0
 

@@ -1,0 +1,9 @@
+Displays the Current Lobbysettings to the Player upon joining
+---
+tags:
+  - Player
+responses:
+  200:
+    description: LobbySettings found
+  204:
+    description: No Lobbysettings available

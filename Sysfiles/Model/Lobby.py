@@ -8,10 +8,12 @@ class Lobby:
         self.lobbyID = Lobby._maxLobbyID + 1
         Lobby._maxLobbyID += 1
         Lobby._lobbyList.append(self.lobbyID)
+        # Getter / Setter im Controller implementieren (Zeilen 20, 26 und 33)
         self.subject = ""
         self.maxPlayers = 0
         self.maxGameLength = 0
         self.playerList = []
+        self.wordList = []
 
     def setSubject(self, subject):
         self.subject = subject
@@ -36,3 +38,12 @@ class Lobby:
 
     def addPlayer(self, player):
         self.playerList.append(player)
+
+    def getPlayerList(self):
+        return self.playerList
+
+    def setCurrentWord(self, word):
+        self.wordList.append(word)
+
+    def getWordList(self):
+        return self.wordList

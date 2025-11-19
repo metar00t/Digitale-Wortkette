@@ -19,8 +19,8 @@ class LobbyController:
             "lobbyID": self.lobby.getLobbyID(),
             "subjectName": [
                 "Tiere",
-                "Staedte",
-                "Fluesse"
+                "Städte",
+                "Flüsse"
             ],
             "generatedQRCode": self.qr.generateQrCode(),
             "maxPlayers": [
@@ -37,37 +37,60 @@ class LobbyController:
                 20
             ]
         }
+        self.createdLobbies.append(createdLobby)
         return createdLobby
 
     def saveCurrentLobby(self):
         lobbyID = self.lobby.getLobbyID()
-        updatedLobby = {
-            "lobbyID": lobbyID,
-            "chosenSubjectName": request.form.get('subjectName'),
-            "chosenMaxPlayers": request.form.get('maxPlayers'),
-            "chosenMaxGameLength": request.form.get('maxGameLength')
-        }
-        self.createdLobbies.append(updatedLobby)
-        return updatedLobby
+        chosenSubject = request.form.get('subjectName')
+        chosenMaxPlayers = request.form.get('maxPlayers')
+        chosenMaxGameLength = request.form.get('maxGameLength')
+        for lobbies in self.createdLobbies:
+            if lobbyID == lobbies["lobbyID"]:
+                if chosenSubject is not None:
+                    lobbies["subjectName"] = chosenSubject
+                    self.lobby.setSubject(chosenSubject)
+                if chosenMaxPlayers is not None:
+                    lobbies["maxPlayers"] = chosenMaxPlayers
+                    self.lobby.setMaxPlayers(chosenMaxPlayers)
+                if chosenMaxGameLength is not None:
+                    lobbies["maxGameLength"] = chosenMaxGameLength
+                    self.lobby.setMaxGameLength(chosenMaxGameLength)
+                break
+
+    def getChosenLobbySettings(self, playerList):
+        if self.lobby is None:
+            return {}, 204
+        lobbyID = self.lobby.getLobbyID()
+        for lobbies in self.createdLobbies:
+            if lobbyID == lobbies["lobbyID"]:
+             return {
+                "chosenSubject" : self.lobby.getSubject(),
+                "chosenMaxPlayers": self.lobby.getMaxPlayers(),
+                "chosenMaxGameLength" : self.lobby.getMaxGameLength(),
+                "playerList" : playerList
+             }
 
     def getLobbyList(self):
         lobbyList = []
         for data in self.createdLobbies:
             lobbyInfo = {
                 "lobbyID": data["lobbyID"],
-                "subjectName": data["chosenSubjectName"],
-                "maxPlayers": data["chosenMaxPlayers"]
+                "subjectName": data["subjectName"],
+                "maxPlayers": data["maxPlayers"]
             }
             lobbyList.append(lobbyInfo)
         if self.lobby is None or not lobbyList:
             return [{}], 204
         return lobbyList
 
+    def getCurrentLobbyID(self):
+        return self.lobby.getLobbyID()
+
     def playerJoins(self):
         self.player = Player()
         playerList = []
-        # self.player.setNickname(request.form['nickname']) <<<< swap when Testing
-        self.player.setNickname(request.form.get('nickname'))
+        self.player.setNickname(request.form['nickname'])
         self.player.setStatus(False)
         player = {
             "username": self.player.getNickname(),
@@ -90,15 +113,6 @@ class LobbyController:
             }
             playerList.append(playerInfo)
         return playerList, 200
-
-    def getChosenLobbySettings(self):
-        if self.lobby is None:
-            return {}, 204
-        return {
-            "chosenSubjectName": self.lobby.getSubject(),
-            "chosenGameLength": self.lobby.getMaxGameLength(),
-            "chosenMaxPlayer": self.lobby.getMaxPlayers()
-        }
 
     def setGameStatus(self):
         return {

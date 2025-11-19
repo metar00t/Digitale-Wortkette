@@ -5,10 +5,9 @@ class Lobby:
     _lobbyList = []
 
     def __init__(self):
-        self.lobbyID = Lobby._maxLobbyID + 1
+        self.lobbyID = Lobby._maxLobbyID
         Lobby._maxLobbyID += 1
         Lobby._lobbyList.append(self.lobbyID)
-        # Getter / Setter im Controller implementieren (Zeilen 20, 26 und 33)
         self.subject = ""
         self.maxPlayers = 0
         self.maxGameLength = 0

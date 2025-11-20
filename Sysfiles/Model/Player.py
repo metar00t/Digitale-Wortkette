@@ -2,8 +2,8 @@ class Player:
     _userID = 0
 
     def __init__(self):
-        self.nickname = None
-        self.status = None
+        self.nickname = ""
+        self.status = ""
         self.userID = Player._userID + 1
         Player._userID += 1
 

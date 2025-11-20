@@ -5,6 +5,7 @@ from Sysfiles.Controller.QRCodeController import QrCodeController
 from Sysfiles.Model.Lobby import Lobby
 from Sysfiles.Model.Player import Player
 
+
 class LobbyController:
     def __init__(self):
         self.player = None
@@ -58,18 +59,15 @@ class LobbyController:
                     self.lobby.setMaxGameLength(chosenMaxGameLength)
                 break
 
-    def getChosenLobbySettings(self, playerList):
-        if self.lobby is None:
-            return {}, 204
-        lobbyID = self.lobby.getLobbyID()
+    def getChosenLobbySettings(self, lobbyID):
         for lobbies in self.createdLobbies:
             if lobbyID == lobbies["lobbyID"]:
-             return {
-                "chosenSubject" : self.lobby.getSubject(),
-                "chosenMaxPlayers": self.lobby.getMaxPlayers(),
-                "chosenMaxGameLength" : self.lobby.getMaxGameLength(),
-                "playerList" : playerList
-             }
+                return {
+                        "chosenSubject": lobbies["subjectName"],
+                        "chosenMaxPlayers": lobbies["maxPlayers"],
+                        "chosenMaxGameLength": lobbies["maxGameLength"]
+                }
+        return {}
 
     def getLobbyList(self):
         lobbyList = []
@@ -84,30 +82,46 @@ class LobbyController:
             return [{}], 204
         return lobbyList
 
-    def getCurrentLobbyID(self):
-        return self.lobby.getLobbyID()
-
-    def playerJoins(self):
+    def playerJoins(self, lobbyID):
         self.player = Player()
-        playerList = []
-        self.player.setNickname(request.form['nickname'])
-        self.player.setStatus(False)
-        player = {
-            "username": self.player.getNickname(),
-            "isPlayerReady": self.player.getStatus()
-        }
-        playerList.append(player)
+        username = request.form['nickname']
+        self.player.setNickname(username)
+        status = request.form['isPlayerReady']
+        self.player.setStatus(status)
         if self.lobby is None:
             return [{}], 204
-        self.lobby.addPlayer(player)
-        return playerList, 201
+        playerAlreadyExists = self.getPlayer(username, lobbyID)
+        if playerAlreadyExists:
+            self.updatePlayerStatus(lobbyID, username, status)
+            return self.lobby.getPlayerList(), 201
+        else:
+            player = {
+                "lobbyID": lobbyID,
+                "username": self.player.getNickname(),
+                "isPlayerReady": self.player.getStatus()
+            }
+            self.lobby.addPlayer(player)
+            return self.lobby.getPlayerList(), 201
 
-    def getPlayerList(self):
+    def getPlayer(self, username, lobbyID):
+        for p in self.lobby.getPlayerList():
+            if p["username"] == username and p["lobbyID"] == lobbyID:
+                return p
+        return None
+
+    def updatePlayerStatus(self, lobbyID, username, status):
+        for p in self.lobby.getPlayerList():
+            if p["username"] == username and p["lobbyID"] == lobbyID:
+                p["isPlayerReady"] = status
+                return
+
+    def getPlayerList(self, lobbyID):
         playerList = []
         if self.lobby is None or not self.lobby.playerList:
             return [{}], 204
         for data in self.lobby.getPlayerList():
             playerInfo = {
+                "lobbyID": data["lobbyID"],
                 "username": data["username"],
                 "isPlayerReady": data["isPlayerReady"]
             }
@@ -116,8 +130,8 @@ class LobbyController:
 
     def setGameStatus(self):
         return {
-            "hasGameStarted" : bool,
-            "firstLetter" : random.choice(string.ascii_letters)
+            "hasGameStarted": bool,
+            "firstLetter": random.choice(string.ascii_letters)
         }
 
     def gameSession(self):
@@ -128,22 +142,22 @@ class LobbyController:
             return {}, 204
         currentWord = currentWordList[-1]
         return {
-            "chosenSubject" : self.lobby.getSubject(),
-            "timer" : float,
-            "currentLetter" : currentWord[:1],
-            "previousWords" : {
-                "wordUsed" : currentWord,
-                "username" : self.player.getNickname()
+            "chosenSubject": self.lobby.getSubject(),
+            "timer": float,
+            "currentLetter": currentWord[:1],
+            "previousWords": {
+                "wordUsed": currentWord,
+                "username": self.player.getNickname()
             },
-            "playerStatus" : [
+            "playerStatus": [
                 "disconnected",
                 "selected",
                 "next",
                 "connected",
                 "suspend round"
             ],
-            "wordsPerMinute" : float,
-            "usableWord" : bool
+            "wordsPerMinute": float,
+            "usableWord": bool
         }
 
     def checkInput(self):
@@ -158,3 +172,6 @@ class LobbyController:
 
     def addWord(self, word):
         return self.lobby.setCurrentWord(word)
+
+    def getCurrentLobbyID(self):
+        return self.lobby.getLobbyID()

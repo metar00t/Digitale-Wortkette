@@ -34,21 +34,22 @@ def hostLobby():
         lobbyController.saveCurrentLobby()
     return http_status_message(200)
 
-@app.route("/api/v1/dwk/join-lobby", methods=['GET', 'POST'])
+@app.get("/api/v1/dwk/join-lobby")
 def joinLobby():
-    if request.method == 'GET':
-        return redirect(url_for('lobby', lobbyID=lobbyController.getCurrentLobbyID()))
-    if request.method == 'POST':
-        lobbyController.playerJoins()
-        pass
-    return http_status_message(200)
+    return redirect(url_for('join', lobbyID=lobbyController.getCurrentLobbyID()))
 
-@app.route("/api/v1/dwk/lobby/<lobbyID>", methods=['GET', 'POST'])
-def lobby(lobbyID):
-    if request.method == 'GET':
-        return lobbyController.getChosenLobbySettings(lobbyController.getPlayerList())
-    if request.method == 'POST':
-        pass
+@app.get("/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
+def lobbySettings(lobbyID):
+    return lobbyController.getChosenLobbySettings(lobbyID)
+
+@app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
+def playerList(lobbyID):
+    return lobbyController.getPlayerList(lobbyID)
+
+@app.post("/api/v1/dwk/lobby/<int:lobbyID>/join")
+def join(lobbyID):
+    lobbyController.playerJoins(lobbyID)
+    return {"message" : "Beitritt erfolgreich"}
 
 @app.post("/api/v1/dwk/start-game")
 def startGame():

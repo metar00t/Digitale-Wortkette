@@ -1,6 +1,8 @@
-import random, string
+import random
+import string
 
 from flask import request
+
 from Sysfiles.Controller.QRCodeController import QrCodeController
 from Sysfiles.Model.Lobby import Lobby
 from Sysfiles.Model.Player import Player
@@ -63,9 +65,9 @@ class LobbyController:
         for lobbies in self.createdLobbies:
             if lobbyID == lobbies["lobbyID"]:
                 return {
-                        "chosenSubject": lobbies["subjectName"],
-                        "chosenMaxPlayers": lobbies["maxPlayers"],
-                        "chosenMaxGameLength": lobbies["maxGameLength"]
+                    "chosenSubject": lobbies["subjectName"],
+                    "chosenMaxPlayers": lobbies["maxPlayers"],
+                    "chosenMaxGameLength": lobbies["maxGameLength"]
                 }
         return {}
 
@@ -79,7 +81,7 @@ class LobbyController:
             }
             lobbyList.append(lobbyInfo)
         if self.lobby is None or not lobbyList:
-            return [{}], 204
+            return {}, 204
         return lobbyList
 
     def playerJoins(self, lobbyID):
@@ -104,15 +106,15 @@ class LobbyController:
             return self.lobby.getPlayerList(), 201
 
     def getPlayer(self, username, lobbyID):
-        for p in self.lobby.getPlayerList():
-            if p["username"] == username and p["lobbyID"] == lobbyID:
-                return p
+        for players in self.lobby.getPlayerList():
+            if players["username"] == username and players["lobbyID"] == lobbyID:
+                return players
         return None
 
     def updatePlayerStatus(self, lobbyID, username, status):
-        for p in self.lobby.getPlayerList():
-            if p["username"] == username and p["lobbyID"] == lobbyID:
-                p["isPlayerReady"] = status
+        for players in self.lobby.getPlayerList():
+            if players["username"] == username and players["lobbyID"] == lobbyID:
+                players["isPlayerReady"] = status
                 return
 
     def getPlayerList(self, lobbyID):

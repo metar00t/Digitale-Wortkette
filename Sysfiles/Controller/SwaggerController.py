@@ -1,5 +1,6 @@
 from flask_swagger_ui import *
 
+
 class SwaggerDoc:
     def __init__(self):
         self.app = None

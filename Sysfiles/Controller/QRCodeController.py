@@ -1,6 +1,7 @@
 import qrcode
 import qrcode.image.svg
 
+
 class QrCodeController:
     def __init__(self, text):
         self.text = text

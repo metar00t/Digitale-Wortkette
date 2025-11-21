@@ -1,5 +1,3 @@
-import random
-
 class Lobby:
     _maxLobbyID = 0
     _lobbyList = []

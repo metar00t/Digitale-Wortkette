@@ -1,19 +1,22 @@
 # Digitale-Wortkette
-Dieses Projekt nutzt für das Frontend Flutter in dem Folgendem [Repository](https://github.com/Manofward/Flutter) mit einer minimal demo zur nutzung von Flutter und Flask.
+Dieses Projekt wird für die Kommunikation mit dem Frontend Flutter in dem folgendem [Repository](https://github.com/Manofward/Flutter) genutzt.
+Die Nutzung des Backends erfolgt durch die Composer Datei, nachdem dieses Repository geklont wurde, um die Docker-Datei auszuführen.
 
-## Requirements pre-dev:
-- Webserver
-- Datenbank (MariaDB)
-- Sprache (Python)
+## Index:
+- [Technologien](#technologien)
+- [Benötigte Bibliotheken](#benötigte-bibliotheken--version-die-benötigt-werden)
+
+## Technologien:
 - REST-API (Flask)
-- API-Dokumentation (Swagger+UI)
+- Webserver (Flask)
+- Docker
+- API-Endpoint Documentation (Swagger+UI)
 
-## Aufgabenteilung
-### Janik
-- UML Klassendiagramm
-- Mockup
-
-### David
-- Kickoff Meeting mit AB vereinbaren
-- Swagger Ordner / Source Location einrichten im Repo
-- (During Development) Ordner TreeView Struktur aufbauen und maintainen
+## Benötigte Bibliotheken zum erfolgreichen bauen der Dockerdatei ([Siehe requirements.txt Datei zur Referenz](requirements.txt)):
+- Flask~=3.1.2
+- Flask-RESTful~=0.3.10
+- flask-swagger~=0.2.14
+- configparser~=7.2.0
+- qrcode~=8.2
+- django-qrcode~=0.3
+- flask-swagger-ui~=5.21.0

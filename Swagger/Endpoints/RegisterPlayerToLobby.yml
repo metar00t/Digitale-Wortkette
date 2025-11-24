@@ -1,0 +1,25 @@
+Join Lobby
+---
+tags:
+  - Player
+parameters:
+  - in: body
+    name: Player
+    required:
+      - username
+    properties:
+      username:
+        type: string
+        description: Name of the User
+      status:
+        type: boolean
+        description: Status of Player, set to False by Default.
+  - in: query
+    name: lobbyID
+    required: True
+    description: The LobbyID to which a Player wants to join
+    schema:
+      type: Integer
+responses:
+  201:
+    description: Player created

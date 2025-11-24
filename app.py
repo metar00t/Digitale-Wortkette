@@ -2,7 +2,9 @@ from flask import Flask, jsonify, request, redirect, url_for
 from flask_restful import Api, http_status_message
 from flask_swagger import swagger
 
+from Swagger.ClassSpecification.HomeSpecification import HomeSpecification
 from Swagger.ClassSpecification.HostSpecification import HostSpecification
+from Swagger.ClassSpecification.LobbySettingSpecification import LobbySettingSpecification
 from Swagger.ClassSpecification.LobbySpecification import LobbySpecification
 from Swagger.ClassSpecification.PlayerSpecification import PlayerSpecification
 from Sysfiles.Controller.LobbyController import LobbyController
@@ -11,12 +13,12 @@ from Sysfiles.Controller.SwaggerController import SwaggerDoc
 app = Flask(__name__)
 
 swaggerInfo = SwaggerDoc()
-swaggerInfo.setup(app, Api(app), "/api/v1/dwk/docs", "/api/v1/dwk/spec")
+swaggerInfo.setup(app, Api(app), "/api/v1/dwk/docs", "/api/v1/dwk")
 swaggerInfo.setBlueprint()
 lobbyController = LobbyController()
 
 
-@app.get("/api/v1/dwk/spec")
+@app.get("/api/v1/dwk")
 def spec():
     swag = swagger(app, from_file_keyword="swagger_from_file")
     swag['info']['version'] = "1.0"
@@ -34,7 +36,10 @@ def spec():
 
 @app.get("/api/v1/dwk/home")
 def home():
-    return lobbyController.getLobbyList()
+    if lobbyController.getLobbyList() is None:
+        return {} , 204
+    else:
+        return lobbyController.getLobbyList() , 200
 
 
 @app.route("/api/v1/dwk/host-lobby", methods=['GET', 'POST'])
@@ -58,7 +63,7 @@ def lobbySettings(lobbyID):
 
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 def playerList(lobbyID):
-    return lobbyController.getPlayerList(lobbyID)
+    return lobbyController.getPlayerList(lobbyID),200
 
 
 @app.post("/api/v1/dwk/lobby/<int:lobbyID>/join")
@@ -84,10 +89,11 @@ def game():
         else:
             return {}
 
-
+swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")
 swaggerInfo.addResource(HostSpecification, "/api/v1/dwk/host-lobby")
-swaggerInfo.addResource(LobbySpecification, "/api/v1/dwk/lobby/")
-swaggerInfo.addResource(PlayerSpecification, "/api/v1/dwk/join-lobby")
+swaggerInfo.addResource(LobbySpecification, "/api/v1/dwk/lobby/<int:lobbyID>/playerList")
+swaggerInfo.addResource(LobbySettingSpecification, "/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
+swaggerInfo.addResource(PlayerSpecification, "/api/v1/dwk/lobby/<int:lobbyID>/join")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

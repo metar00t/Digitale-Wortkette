@@ -1,7 +1,14 @@
-Displays the Current Lobbysettings to the Player upon joining
+Get the current LobbySettings
 ---
 tags:
-  - Player
+  - Lobby
+parameters:
+  - in: path
+    name: lobbyID
+    required: True
+    description: The LobbyID to get the Settings from
+    schema:
+      type: Integer
 responses:
   200:
     description: LobbySettings found

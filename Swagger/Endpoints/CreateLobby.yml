@@ -1,24 +1,7 @@
-Create a new Lobby
+Initial Payload with the default Values, when creating a new Lobby
 ---
 tags:
   - Host
-parameters:
-  - in: body
-    name: Lobby
-    required:
-      - subject
-      - maxPlayers
-      - maxGameLength
-    properties:
-      subject:
-        type: string
-        description: Topic of the Game Session
-      maxPlayers:
-        type: integer
-        description: Sets the maximum Amount of Players that can join the Lobby
-      maxGameLength:
-        type: integer
-        description: Sets the maximum Length of the Game
 responses:
   201:
     description: Lobby created

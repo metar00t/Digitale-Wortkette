@@ -1,9 +1,0 @@
-List of current Players in the Lobby
----
-tags:
-  - Host
-responses:
-  200:
-    description: Playerlist found
-  204:
-    description: No Playerlist present

@@ -1,9 +1,16 @@
-List of Connected Players in Lobby and their current Status
+List of Connected Players in the Lobby
 ---
 tags:
   - Lobby
+parameters:
+  - in: path
+    name: lobbyID
+    required: True
+    description: The LobbyID to get the matching Playerlist
+    schema:
+      type: Integer
 responses:
   200:
     description: Playerlist found
   204:
-    description: No Playerlist found
+    description: Playerlist not yet created

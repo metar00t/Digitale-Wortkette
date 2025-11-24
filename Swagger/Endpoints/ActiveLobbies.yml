@@ -1,0 +1,9 @@
+List of available Lobbies to Join
+---
+tags:
+  - Lobby
+responses:
+  200:
+    description: Joinable Lobbies available
+  204:
+    description: No Lobbies currently active

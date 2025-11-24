@@ -14,7 +14,7 @@ parameters:
       status:
         type: boolean
         description: Status of Player, set to False by Default.
-  - in: query
+  - in: path
     name: lobbyID
     required: True
     description: The LobbyID to which a Player wants to join

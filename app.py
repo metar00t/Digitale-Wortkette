@@ -63,7 +63,7 @@ def lobbySettings(lobbyID):
 
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 def playerList(lobbyID):
-    return lobbyController.getPlayerList(lobbyID),200
+    return lobbyController.getPlayerList(lobbyID)
 
 
 @app.post("/api/v1/dwk/lobby/<int:lobbyID>/join")

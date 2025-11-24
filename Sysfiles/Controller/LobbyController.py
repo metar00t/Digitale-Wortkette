@@ -122,14 +122,15 @@ class LobbyController:
     def getPlayerList(self, lobbyID):
         playerList = []
         if self.lobby is None or not self.lobby.playerList:
-            return [{}], 204
+            return {}, 204
         for data in self.lobby.getPlayerList():
-            playerInfo = {
-                "lobbyID": data["lobbyID"],
-                "username": data["username"],
-                "isPlayerReady": data["isPlayerReady"]
-            }
-            playerList.append(playerInfo)
+            if lobbyID == data['lobbyID']:
+                playerInfo = {
+                    "lobbyID": data["lobbyID"],
+                    "username": data["username"],
+                    "isPlayerReady": data["isPlayerReady"]
+                }
+                playerList.append(playerInfo)
         return playerList
 
     def getCurrentLobbyID(self):

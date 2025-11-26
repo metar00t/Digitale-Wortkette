@@ -89,8 +89,11 @@ class LobbyController:
     def playerJoins(self, lobbyID):
         self.player = Player()
         username = request.form['nickname']
+        #username = request.form.get('nickname')
+        if username.strip() == "":
+            return {"message" : "Bitte gib einen Usernamen ein"}
+        status = request.form.get('isPlayerReady')
         self.player.setNickname(username)
-        status = request.form['isPlayerReady']
         self.player.setStatus(status)
         if self.lobby is None:
             return {}

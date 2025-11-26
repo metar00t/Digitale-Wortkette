@@ -4,14 +4,14 @@ tags:
   - Player
 parameters:
   - in: body
-    name: Player
+    name: user
     required:
-      - username
+      - nickname
     properties:
-      username:
+      nickname:
         type: string
         description: Name of the User
-      status:
+      isPlayerReady:
         type: boolean
         description: Status of Player, set to False by Default.
   - in: path

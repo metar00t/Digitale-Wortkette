@@ -113,11 +113,6 @@ class LobbyController:
                 "isPlayerReady": self.player.getStatus()
             }
             self.lobby.addPlayer(player)
-            # Debug Playercounter begin
-            temp = self.lobby.getPlayerList()
-            count = len(temp)
-            print(count)
-            # Debug Playercounter end
             return self.lobby.getPlayerList()
 
     def getPlayer(self, username, lobbyID):
@@ -146,5 +141,25 @@ class LobbyController:
                 playerList.append(playerInfo)
         return playerList
 
-    def getCurrentLobbyID(self):
-        return self.lobby.getLobbyID()
+    def isPlayerLimitReached(self, lobbyID):
+        foundLobby = None
+        for l in self.createdLobbies:
+            if l["lobbyID"] == lobbyID:
+                foundLobby = l
+                break
+
+        if foundLobby is None:
+            return False
+
+        maxPlayers = int(foundLobby["maxPlayers"])
+
+        count = 0
+        for player in self.lobby.getPlayerList():
+            if player["lobbyID"] == lobbyID:
+                count += 1
+
+        if count >= maxPlayers:
+            return True
+        else:
+            return False
+

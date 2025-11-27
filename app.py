@@ -71,8 +71,11 @@ def playerList(lobbyID):
 # Endpoint for joining a Lobby with a given LobbyID
 @app.post("/api/v1/dwk/lobby/<int:lobbyID>/join")
 def join(lobbyID):
-    lobbyController.playerJoins(lobbyID)
-    return {"message": "Beitritt erfolgreich"}
+    if lobbyController.isPlayerLimitReached(lobbyID):
+        return {"message": "Spielerlimit erreicht"}
+    else:
+        lobbyController.playerJoins(lobbyID)
+        return {"message": "Beitritt erfolgreich"}
 
 
 @app.post("/api/v1/dwk/start-game")

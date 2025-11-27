@@ -2,23 +2,24 @@ Update the Lobby with the chosen Settings in the App
 ---
 tags:
   - Host
+consumes:
+  - application/x-www-form-urlencoded
 parameters:
-  - in: body
-    name: Lobby
-    required:
-      - subjectName
-      - maxPlayers
-      - maxGameLength
-    properties:
-      subject:
-        type: string
-        description: Topic of the Game Session
-      maxPlayers:
-        type: integer
-        description: Sets the maximum Amount of Players that can join the Lobby
-      maxGameLength:
-        type: integer
-        description: Sets the maximum Length of the Game
+  - in: formData
+    name: subjectName
+    type: string
+    required: true
+    description: chosen subject
+  - in: formData
+    name: maxPlayers
+    type: number
+    required: true
+    description: chosen Maximum Amount of Players
+  - in: formData
+    name: maxGameLength
+    type: number
+    required: true
+    description: chosen Gamelength
 responses:
   200:
     description: Lobby updated

@@ -2,6 +2,59 @@ Initial Payload with the default Values, when creating a new Lobby
 ---
 tags:
   - Host
+produces:
+  - application/json
 responses:
   201:
     description: Lobby created
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          lobbyID:
+            type: integer
+            description: LobbyID
+          generatedQRCode:
+            type: string
+            description: SVG Path for the QRCode generation
+          maxGameLength:
+            type: array
+            items:
+              type: integer
+              enum:
+                [
+                  5,
+                  10,
+                  15,
+                  20,
+                  25,
+                  30,
+                ]
+          maxPlayers:
+            type: array
+            items:
+              type: integer
+              enum:
+                [
+                  5,
+                  10,
+                  15,
+                  20,
+                  25,
+                  30,
+                  35,
+                ]
+          subjectName:
+            type: array
+            items:
+              type: string
+              enum:
+                [
+                  "Tiere",
+                  "Städte",
+                  "Flüsse",
+                  "Programmiersprachen",
+                  "IDE",
+                  "Hardware",
+                ]

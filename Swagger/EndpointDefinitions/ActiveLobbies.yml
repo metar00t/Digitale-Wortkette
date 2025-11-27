@@ -2,8 +2,27 @@ List of available Lobbies to Join
 ---
 tags:
   - Lobby
+produces:
+  - application/json
 responses:
   200:
     description: Joinable Lobbies available
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          lobbyID:
+            type: integer
+            description: LobbyID
+          subjectName:
+            type: string
+            default: Tiere
+            description: Topic
+          maxPlayers:
+            type: string
+            default: 5
+            description: Max Amount of Players
+
   204:
     description: No Lobbies currently active

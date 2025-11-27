@@ -3,23 +3,27 @@ Join Lobby
 tags:
   - Player
 parameters:
-  - in: body
-    name: user
-    required:
-      - nickname
-    properties:
-      nickname:
-        type: string
-        description: Name of the User
-      isPlayerReady:
-        type: boolean
-        description: Status of Player, set to False by Default.
+  - in: formData
+    name: nickname
+    type: string
+    required: true
+    description: Nickname of Player
+  - in: formData
+    name: isPlayerReady
+    type: boolean
+    default: false
+    description: Status of Player
   - in: path
     name: lobbyID
-    required: True
-    description: The LobbyID to which a Player wants to join
-    schema:
-      type: Integer
+    type: integer
+    required: true
+    description: The LobbyID from the Lobby the Player wants to join
 responses:
-  201:
-    description: Player created
+  200:
+    description: Player joined successfully
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Beitritt erfolgreich

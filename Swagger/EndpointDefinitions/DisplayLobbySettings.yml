@@ -2,15 +2,31 @@ Get the current LobbySettings
 ---
 tags:
   - Lobby
+produces:
+  - application/json
 parameters:
   - in: path
     name: lobbyID
-    required: True
-    description: The LobbyID to get the Settings from
-    schema:
-      type: Integer
+    type: integer
+    required: true
+    description: The LobbyID for the Lobbysettings
 responses:
   200:
     description: LobbySettings found
+    schema:
+      type: object
+      properties:
+        chosenMaxGameLength:
+          type: string
+          default: 15
+          description: Chosen Gamelength
+        chosenSubject:
+          type: string
+          default: Tiere
+          description: Topic
+        chosenMaxPlayers:
+          type: string
+          default: 5
+          description: Chosen Max Amount of Players
   204:
     description: No Lobbysettings available

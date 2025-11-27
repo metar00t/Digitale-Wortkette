@@ -25,6 +25,7 @@ class LobbyController:
                 "Städte",
                 "Flüsse",
                 "Programmiersprachen",
+                "IDE",
                 "Hardware"
             ],
             "generatedQRCode": self.qr.generateQrCode(),
@@ -33,13 +34,17 @@ class LobbyController:
                 10,
                 15,
                 20,
-                25
+                25,
+                30,
+                35
             ],
             "maxGameLength": [
                 5,
                 10,
                 15,
-                20
+                20,
+                25,
+                30
             ]
         }
         self.createdLobbies.append(createdLobby)
@@ -108,6 +113,11 @@ class LobbyController:
                 "isPlayerReady": self.player.getStatus()
             }
             self.lobby.addPlayer(player)
+            # Debug Playercounter begin
+            temp = self.lobby.getPlayerList()
+            count = len(temp)
+            print(count)
+            # Debug Playercounter end
             return self.lobby.getPlayerList()
 
     def getPlayer(self, username, lobbyID):

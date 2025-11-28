@@ -1,6 +1,3 @@
-import random
-import string
-
 from flask import request
 
 from Sysfiles.Controller.QRCodeController import QrCodeController
@@ -17,7 +14,7 @@ class LobbyController:
 
     def createLobby(self):
         self.lobby = Lobby()
-        self.qr = QrCodeController(self.lobby.getLobbyID())
+        self.qr = QrCodeController(f"/api/v1/dwk/lobby/{self.lobby.getLobbyID()}/join")
         createdLobby = {
             "lobbyID": self.lobby.getLobbyID(),
             "subjectName": [
@@ -94,7 +91,6 @@ class LobbyController:
     def playerJoins(self, lobbyID):
         self.player = Player()
         username = request.form['nickname']
-        #username = request.form.get('nickname')
         if username.strip() == "":
             return {"message" : "Bitte gib einen Usernamen ein"}
         status = request.form.get('isPlayerReady')

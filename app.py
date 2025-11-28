@@ -1,6 +1,9 @@
-from flask import Flask, jsonify, request, redirect, url_for
+from flask import Flask, jsonify, request, redirect, url_for, g
 from flask_restful import Api, http_status_message
 from flask_swagger import swagger
+from logging.handlers import RotatingFileHandler
+import logging
+import time
 
 from Swagger.SwaggerClasses.HomeSpecification import HomeSpecification
 from Swagger.SwaggerClasses.HostSpecification import HostSpecification
@@ -12,10 +15,60 @@ from Sysfiles.Controller.SwaggerController import SwaggerDoc
 
 app = Flask(__name__)
 
+# Define the Handler
+handler = RotatingFileHandler(
+    "Logger/Logs/Backend.log",
+    maxBytes=10000,
+    backupCount=3,
+    encoding="utf-8",
+)
+
+# Set the LogLevel (Level-Severity is defined in the Documentation) for both in the loglevel variable
+loglevel = logging.DEBUG
+handler.setLevel(loglevel)
+app.logger.setLevel(loglevel)
+
+# Define the Format for Logging
+formatter = logging.Formatter(
+    "%(asctime)s ||%(funcName)s|| %(levelname)s %(message)s",
+    datefmt="%d.%m.%Y %H:%M:%S"
+)
+# Set the formatters
+handler.setFormatter(formatter)
+# Add the handler to the Flask API
+app.logger.addHandler(handler)
+
 swaggerInfo = SwaggerDoc()
 swaggerInfo.setup(app, Api(app), "/api/v1/dwk/docs", "/api/v1/dwk")
 swaggerInfo.setBlueprint()
 lobbyController = LobbyController()
+
+# Request Logging
+@app.before_request
+def start_timer():
+    """Store start time for request duration"""
+    g.start_time = time.time()
+    app.logger.debug(
+        f"→ Incoming request: {request.method} {request.path} "
+        f"from {request.remote_addr}"
+    )
+
+@app.after_request
+def log_response(response):
+    """Log completed request with duration and status code"""
+    duration = round(time.time() - g.start_time, 4)
+    app.logger.debug(
+        f"← Completed request: {request.method} {request.path} "
+        f"status={response.status_code} duration={duration}s"
+    )
+    return response
+
+# Automatically log exceptions globally
+@app.errorhandler(Exception)
+def catch_all(e):
+    app.logger.exception("Unhandled Exception:")
+    return {"error": "Internal Server Error"}, 500
+
 
 # Swagger Specifications
 @app.get("/api/v1/dwk")
@@ -38,9 +91,11 @@ def spec():
 @app.get("/api/v1/dwk/home")
 def home():
     if lobbyController.getLobbyList() is None:
-        return {} , 204
+        #app.logger.debug("No Lobbies created")
+        return {}, 204
     else:
-        return lobbyController.getLobbyList() , 200
+        #app.logger.debug("Lobbies found")
+        return lobbyController.getLobbyList(), 200
 
 # Endpoint for Creating a new Lobby
 @app.route("/api/v1/dwk/host-lobby", methods=['GET', 'POST'])

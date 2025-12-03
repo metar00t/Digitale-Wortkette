@@ -1,10 +1,12 @@
+import logging
+import time
+from logging.handlers import RotatingFileHandler
+
 from flask import Flask, jsonify, request, redirect, url_for, g
 from flask_restful import Api, http_status_message
 from flask_swagger import swagger
-from logging.handlers import RotatingFileHandler
-import logging
-import time
 
+from Config.config import Config
 from Swagger.SwaggerClasses.HomeSpecification import HomeSpecification
 from Swagger.SwaggerClasses.HostSpecification import HostSpecification
 from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecification
@@ -14,44 +16,48 @@ from Sysfiles.Controller.LobbyController import LobbyController
 from Sysfiles.Controller.SwaggerController import SwaggerDoc
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
 # Define the Handler
 handler = RotatingFileHandler(
-    "Logger/Logs/Backend.log",
-    maxBytes=10000,
-    backupCount=3,
-    encoding="utf-8",
+    app.config["LOG_FILE"],
+    backupCount=app.config["LOG_BACKUP_COUNT"],
+    encoding=app.config["LOG_ENCODING"],
 )
 
 # Set the LogLevel (Level-Severity is defined in the Documentation) for both in the loglevel variable
-loglevel = logging.DEBUG
+loglevel = app.config["LOG_LEVEL"]
 handler.setLevel(loglevel)
 app.logger.setLevel(loglevel)
 
 # Define the Format for Logging
 formatter = logging.Formatter(
-    "%(asctime)s [%(funcName)s] %(levelname)s %(message)s",
-    datefmt="%d.%m.%Y %H:%M:%S"
+    app.config["LOG_FORMAT"],
+    datefmt=app.config["LOG_DATEFORMAT"]
 )
 # Set the formatters
 handler.setFormatter(formatter)
 # Add the handler to the Flask API
 app.logger.addHandler(handler)
 
+# --- Swagger & Controller ---
 swaggerInfo = SwaggerDoc()
 swaggerInfo.setup(app, Api(app), "/api/v1/dwk/docs", "/api/v1/dwk")
 swaggerInfo.setBlueprint()
+
 lobbyController = LobbyController()
 
-# Request Logging
+
+# --- Request Logging ---
 @app.before_request
-def start_timer():
+def incoming_request():
     """Store start time for request duration"""
     g.start_time = time.time()
     app.logger.debug(
         f"→ Incoming request: {request.method} {request.path} "
         f"from {request.remote_addr}"
     )
+
 
 @app.after_request
 def log_response(response):
@@ -63,10 +69,14 @@ def log_response(response):
     )
     return response
 
-# Automatically log exceptions globally
+
+# --- Global Error Logging ---
 @app.errorhandler(Exception)
-def catch_all(e):
-    app.logger.exception("Unhandled Exception:")
+def handle_unhandled_exception(e):
+    """Log any uncaught exception with traceback"""
+    app.logger.exception(
+        f"Unhandled Exception in {request.method} {request.path}: {e}"
+    )
     return {"error": "Internal Server Error"}, 500
 
 
@@ -76,26 +86,29 @@ def spec():
     swag = swagger(app, from_file_keyword="swagger_from_file")
     swag['info']['version'] = "1.0"
     swag['info']['title'] = "Digitale Wortkette - FlaskAPI"
-    swag['info']['description'] = ("This is the Documentation of the EndpointDefinitions for the Flask-API.\nSome useful links:\n- "
-                                   "[The Digitale Wortkette Repository](https://github.com/metar00t/Digitale-Wortkette)")
+    swag['info']['description'] = (
+        "This is the Documentation of the EndpointDefinitions for the Flask-API.\nSome useful links:\n- "
+        "[The Digitale Wortkette Repository](https://github.com/metar00t/Digitale-Wortkette)")
     swag['info']['contact'] = {
-        "email" : "david-paul.adams@outlook.de"
+        "email": "david-paul.adams@outlook.de"
     }
     swag['info']['license'] = {
-        "name" : "Repository License",
-        "url" : "https://github.com/metar00t/Digitale-Wortkette/blob/main/LICENSE"
+        "name": "Repository License",
+        "url": "https://github.com/metar00t/Digitale-Wortkette/blob/main/LICENSE"
     }
     return jsonify(swag)
+
 
 # Entrypoint
 @app.get("/api/v1/dwk/home")
 def home():
     if lobbyController.getLobbyList() is None:
-        #app.logger.debug("No Lobbies created")
+        # app.logger.debug("No Lobbies created")
         return {}, 204
     else:
-        #app.logger.debug("Lobbies found")
+        # app.logger.debug("Lobbies found")
         return lobbyController.getLobbyList(), 200
+
 
 # Endpoint for Creating a new Lobby
 @app.route("/api/v1/dwk/host-lobby", methods=['GET', 'POST'])
@@ -108,20 +121,18 @@ def hostLobby():
         lobbyController.saveCurrentLobby()
     return http_status_message(200)
 
-# TODO: Clarify if this Endpoint is still needed / used
-@app.get("/api/v1/dwk/join-lobby")
-def joinLobby():
-    return redirect(url_for('join', lobbyID=lobbyController.getCurrentLobbyID()))
 
-# Endpoint for exposing the chosen Lobbysettings for a specified LobbyID
+# Endpoint for exposing the chosen Lobby-Settings for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
 def lobbySettings(lobbyID):
     return lobbyController.getChosenLobbySettings(lobbyID)
+
 
 # Endpoint for exposing the current Playerlist for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 def playerList(lobbyID):
     return lobbyController.getPlayerList(lobbyID)
+
 
 # Endpoint for joining a Lobby with a given LobbyID
 @app.post("/api/v1/dwk/lobby/<int:lobbyID>/join")
@@ -131,6 +142,16 @@ def join(lobbyID):
     else:
         lobbyController.playerJoins(lobbyID)
         return {"message": "Beitritt erfolgreich"}
+
+@app.post("/api/v1/dwk/lobby/<int:lobbyID>/leaveGame")
+def leaveGame(lobbyID):
+    name = request.form['nickname']
+    if name != "Host":
+        lobbyController.removePlayer(lobbyID, name)
+        return {"message": f"Lobby #{lobbyID} wurde verlassen"}
+    else:
+        lobbyController.closeLobby(lobbyID)
+        return {"message": f"Lobby #{lobbyID} wurde geschlossen"}
 
 
 @app.post("/api/v1/dwk/start-game")
@@ -149,6 +170,7 @@ def game():
             return lobbyController.addWord(result)
         else:
             return {}
+
 
 swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")
 swaggerInfo.addResource(HostSpecification, "/api/v1/dwk/host-lobby")

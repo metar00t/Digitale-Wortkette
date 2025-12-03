@@ -11,6 +11,7 @@ parameters:
   - in: formData
     name: isPlayerReady
     type: boolean
+    required: true
     default: false
     description: Status of Player
   - in: path

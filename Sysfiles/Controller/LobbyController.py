@@ -44,6 +44,12 @@ class LobbyController:
                 30
             ]
         }
+        player = {
+            "lobbyID": self.lobby.getLobbyID(),
+            "username": "Host",
+            "isPlayerReady": "true"
+        }
+        self.lobby.addPlayer(player)
         self.createdLobbies.append(createdLobby)
         return createdLobby
 
@@ -93,6 +99,8 @@ class LobbyController:
         username = request.form['nickname']
         if username.strip() == "":
             return {"message" : "Bitte gib einen Usernamen ein"}
+        if username.lower() == "host":
+            return {"message": "Dieser Username ist reserviert"}
         status = request.form.get('isPlayerReady')
         self.player.setNickname(username)
         self.player.setStatus(status)
@@ -116,6 +124,29 @@ class LobbyController:
             if players["username"] == username and players["lobbyID"] == lobbyID:
                 return players
         return None
+
+    def removePlayer(self, lobbyID, username):
+        if username == "Host":
+            return False
+        players = self.lobby.getPlayerList()
+        for i, p in enumerate(players):
+            if p["username"] == "Host" and p["lobbyID"] == lobbyID:
+                continue
+            if p["username"] == username and p["lobbyID"] == lobbyID:
+                del players[i]
+                return True
+        return False
+
+    def closeLobby(self, lobbyID):
+        lobbies = self.createdLobbies
+        players = self.lobby.getPlayerList()
+        for i, l in enumerate(lobbies):
+            for j, p in enumerate(players):
+                if l["lobbyID"] == lobbyID and p["lobbyID"] == lobbyID:
+                    del lobbies[i]
+                    del players[j]
+                    return True
+        return False
 
     def updatePlayerStatus(self, lobbyID, username, status):
         for players in self.lobby.getPlayerList():

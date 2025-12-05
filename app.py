@@ -143,8 +143,8 @@ def join(lobbyID):
         lobbyController.playerJoins(lobbyID)
         return {"message": "Beitritt erfolgreich"}
 
-@app.post("/api/v1/dwk/lobby/<int:lobbyID>/leaveGame")
-def leaveGame(lobbyID):
+@app.post("/api/v1/dwk/lobby/<int:lobbyID>/leave")
+def leave(lobbyID):
     name = request.form['nickname']
     if name != "Host":
         lobbyController.removePlayer(lobbyID, name)

@@ -18,3 +18,6 @@ class Player:
 
     def getStatus(self):
         return self.status
+
+    def getUserID(self):
+        return self.userID

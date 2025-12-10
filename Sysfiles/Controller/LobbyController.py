@@ -1,12 +1,14 @@
 from flask import request
 
 from Sysfiles.Controller.QRCodeController import QrCodeController
+from Sysfiles.Model.Host import Host
 from Sysfiles.Model.Lobby import Lobby
 from Sysfiles.Model.Player import Player
 
 
 class LobbyController:
     def __init__(self):
+        self.host = None
         self.player = None
         self.lobby = None
         self.qr = None
@@ -14,6 +16,7 @@ class LobbyController:
 
     def createLobby(self):
         self.lobby = Lobby()
+        self.host = Host()
         self.qr = QrCodeController(f"/api/v1/dwk/lobby/{self.lobby.getLobbyID()}/join")
         createdLobby = {
             "lobbyID": self.lobby.getLobbyID(),
@@ -42,14 +45,23 @@ class LobbyController:
                 20,
                 25,
                 30
-            ]
+            ],
+            "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}")
         }
-        player = {
+        host = {
             "lobbyID": self.lobby.getLobbyID(),
+            "userID" : self.host.getUserID(),
+            "hostID" : int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}"),
             "username": "Host",
             "isPlayerReady": "true"
         }
-        self.lobby.addPlayer(player)
+        # lobby: lobbyID, hostID = host.hostID|| host: hostID: userID_lobbyID
+        # lobby: hostID -> host: hostID -> userID
+        # lobby:
+        # hostID
+        # user:
+        # userID
+        self.lobby.addPlayer(host)
         self.createdLobbies.append(createdLobby)
         return createdLobby
 
@@ -99,8 +111,6 @@ class LobbyController:
         username = request.form['nickname']
         if username.strip() == "":
             return {"message" : "Bitte gib einen Usernamen ein"}
-        if username.lower() == "host":
-            return {"message": "Dieser Username ist reserviert"}
         status = request.form.get('isPlayerReady')
         self.player.setNickname(username)
         self.player.setStatus(status)
@@ -111,13 +121,15 @@ class LobbyController:
             self.updatePlayerStatus(lobbyID, username, status)
             return self.lobby.getPlayerList()
         else:
-            player = {
+            newPlayer = {
                 "lobbyID": lobbyID,
+                "userID" : self.player.getUserID(),
+                "hostID" : 0,
                 "username": self.player.getNickname(),
                 "isPlayerReady": self.player.getStatus()
             }
-            self.lobby.addPlayer(player)
-            return self.lobby.getPlayerList()
+            self.lobby.addPlayer(newPlayer)
+            return newPlayer
 
     def getPlayer(self, username, lobbyID):
         for players in self.lobby.getPlayerList():
@@ -125,14 +137,10 @@ class LobbyController:
                 return players
         return None
 
-    def removePlayer(self, lobbyID, username):
-        if username == "Host":
-            return False
+    def removePlayer(self, lobbyID, userID):
         players = self.lobby.getPlayerList()
         for i, p in enumerate(players):
-            if p["username"] == "Host" and p["lobbyID"] == lobbyID:
-                continue
-            if p["username"] == username and p["lobbyID"] == lobbyID:
+            if p["userID"] == userID and p["lobbyID"] == lobbyID:
                 del players[i]
                 return True
         return False
@@ -140,9 +148,10 @@ class LobbyController:
     def closeLobby(self, lobbyID):
         lobbies = self.createdLobbies
         players = self.lobby.getPlayerList()
+        userID = request.form.get('userID')
         for i, l in enumerate(lobbies):
             for j, p in enumerate(players):
-                if l["lobbyID"] == lobbyID and p["lobbyID"] == lobbyID:
+                if l["lobbyID"] == lobbyID and p["lobbyID"] == lobbyID and p["userID"] == userID:
                     del lobbies[i]
                     del players[j]
                     return True
@@ -162,6 +171,8 @@ class LobbyController:
             if lobbyID == data['lobbyID']:
                 playerInfo = {
                     "lobbyID": data["lobbyID"],
+                    "userID": data["userID"],
+                    "hostID": data["hostID"],
                     "username": data["username"],
                     "isPlayerReady": data["isPlayerReady"]
                 }

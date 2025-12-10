@@ -1,6 +1,12 @@
-from api.v1.dwk.execute.Model.Player import Player
+from Sysfiles.Model.Player import Player
 
-
-# Idea: The Host is supposed to be the only one, able to setup and edit the Lobbysettings.
 class Host(Player):
-    pass
+    _hostID = 0
+
+    def __init__(self):
+        super().__init__()
+        self.hostID = Host._hostID + 1
+        Host._hostID += 1
+
+    def getHostID(self):
+        return self.hostID

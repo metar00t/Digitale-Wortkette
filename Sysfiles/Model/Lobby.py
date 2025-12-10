@@ -3,7 +3,7 @@ class Lobby:
     _lobbyList = []
 
     def __init__(self):
-        self.lobbyID = Lobby._maxLobbyID
+        self.lobbyID = Lobby._maxLobbyID + 1
         Lobby._maxLobbyID += 1
         Lobby._lobbyList.append(self.lobbyID)
         self.subject = ""

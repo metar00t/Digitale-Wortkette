@@ -46,7 +46,8 @@ class LobbyController:
                 25,
                 30
             ],
-            "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}")
+            "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}"),
+            "userID": self.host.getUserID()
         }
         host = {
             "lobbyID": self.lobby.getLobbyID(),
@@ -55,12 +56,6 @@ class LobbyController:
             "username": "Host",
             "isPlayerReady": "true"
         }
-        # lobby: lobbyID, hostID = host.hostID|| host: hostID: userID_lobbyID
-        # lobby: hostID -> host: hostID -> userID
-        # lobby:
-        # hostID
-        # user:
-        # userID
         self.lobby.addPlayer(host)
         self.createdLobbies.append(createdLobby)
         return createdLobby
@@ -106,7 +101,7 @@ class LobbyController:
             return None
         return lobbyList
 
-    def playerJoins(self, lobbyID):
+    def playerJoins(self, lobbyID, userID):
         self.player = Player()
         username = request.form['nickname']
         if username.strip() == "":
@@ -116,10 +111,9 @@ class LobbyController:
         self.player.setStatus(status)
         if self.lobby is None:
             return {}
-        playerAlreadyExists = self.getPlayer(username, lobbyID)
+        playerAlreadyExists = self.getPlayer(userID, lobbyID)
         if playerAlreadyExists:
-            self.updatePlayerStatus(lobbyID, username, status)
-            return self.lobby.getPlayerList()
+            return self.updatePlayer(lobbyID, userID, username, status)
         else:
             newPlayer = {
                 "lobbyID": lobbyID,
@@ -131,11 +125,26 @@ class LobbyController:
             self.lobby.addPlayer(newPlayer)
             return newPlayer
 
-    def getPlayer(self, username, lobbyID):
+    def getPlayer(self, userID, lobbyID):
         for players in self.lobby.getPlayerList():
-            if players["username"] == username and players["lobbyID"] == lobbyID:
-                return players
-        return None
+            if players["userID"] == userID and players["lobbyID"] == lobbyID:
+                return True
+        return False
+
+    def updatePlayer(self, lobbyID, userID, username, status):
+        updatedPlayer = None
+        for players in self.lobby.getPlayerList():
+            if players["userID"] == userID and players["lobbyID"] == lobbyID:
+                players["isPlayerReady"] = status
+                players["username"] = username
+                updatedPlayer = {
+                "lobbyID": lobbyID,
+                "userID" : players["userID"],
+                "hostID" : 0,
+                "username": players["username"],
+                "isPlayerReady": status
+            }
+        return updatedPlayer
 
     def removePlayer(self, lobbyID, userID):
         players = self.lobby.getPlayerList()
@@ -145,23 +154,17 @@ class LobbyController:
                 return True
         return False
 
-    def closeLobby(self, lobbyID):
+    def closeLobby(self, lobbyID, hostID):
         lobbies = self.createdLobbies
         players = self.lobby.getPlayerList()
-        userID = request.form.get('userID')
         for i, l in enumerate(lobbies):
             for j, p in enumerate(players):
-                if l["lobbyID"] == lobbyID and p["lobbyID"] == lobbyID and p["userID"] == userID:
+                if l["lobbyID"] == lobbyID and p["lobbyID"] == lobbyID and p["hostID"] == hostID:
                     del lobbies[i]
                     del players[j]
                     return True
         return False
 
-    def updatePlayerStatus(self, lobbyID, username, status):
-        for players in self.lobby.getPlayerList():
-            if players["username"] == username and players["lobbyID"] == lobbyID:
-                players["isPlayerReady"] = status
-                return
 
     def getPlayerList(self, lobbyID):
         playerList = []

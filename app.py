@@ -111,7 +111,7 @@ def home():
 
 
 # Endpoint for Creating a new Lobby
-@app.route("/api/v1/dwk/host-lobby", methods=['GET', 'POST'])
+@app.route("/api/v1/dwk/host/host-lobby", methods=['GET', 'POST'])
 def hostLobby():
     # Create a new Lobby with Default Values
     if request.method == 'GET':
@@ -135,23 +135,25 @@ def playerList(lobbyID):
 
 
 # Endpoint for joining a Lobby with a given LobbyID
-@app.post("/api/v1/dwk/lobby/<int:lobbyID>/join")
+@app.post("/api/v1/dwk/player/<int:lobbyID>/join")
 def join(lobbyID):
+    userID = request.form.get('userID')
     if lobbyController.isPlayerLimitReached(lobbyID):
         return {"message": "Spielerlimit erreicht"}
     else:
-        lobbyController.playerJoins(lobbyID)
-        return {"message": "Beitritt erfolgreich"}
+        return lobbyController.playerJoins(lobbyID, int(userID))
 
-@app.post("/api/v1/dwk/lobby/<int:lobbyID>/leave")
+@app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
 def leave(lobbyID):
-    name = request.form['nickname']
-    if name != "Host":
-        lobbyController.removePlayer(lobbyID, name)
+    hostID = request.form.get('hostID')
+    userID = request.form.get('userID')
+    if int(hostID) == 0:
+        lobbyController.removePlayer(lobbyID, int(userID))
         return {"message": f"Lobby #{lobbyID} wurde verlassen"}
-    else:
-        lobbyController.closeLobby(lobbyID)
+    if int(hostID) > 0:
+        lobbyController.closeLobby(lobbyID, int(hostID))
         return {"message": f"Lobby #{lobbyID} wurde geschlossen"}
+    return None
 
 
 @app.post("/api/v1/dwk/start-game")
@@ -173,10 +175,10 @@ def game():
 
 
 swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")
-swaggerInfo.addResource(HostSpecification, "/api/v1/dwk/host-lobby")
+swaggerInfo.addResource(HostSpecification, "/api/v1/dwk/host/host-lobby")
 swaggerInfo.addResource(LobbySpecification, "/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 swaggerInfo.addResource(LobbySettingSpecification, "/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
-swaggerInfo.addResource(PlayerSpecification, "/api/v1/dwk/lobby/<int:lobbyID>/join")
+swaggerInfo.addResource(PlayerSpecification, "/api/v1/dwk/player/<int:lobbyID>/join")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

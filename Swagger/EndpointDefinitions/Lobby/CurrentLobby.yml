@@ -1,4 +1,4 @@
-List of Connected Players in Lobby
+Current Lobby with Playerlist
 ---
 tags:
   - Lobby
@@ -20,7 +20,16 @@ responses:
         properties:
           lobbyID:
             type: integer
+            default: 1
             description: LobbyID
+          hostID:
+            type: integer
+            default: 0
+            description: HostID
+          userID:
+            type: integer
+            default: 2
+            description: Players userID
           username:
             type: string
             default: John Doe

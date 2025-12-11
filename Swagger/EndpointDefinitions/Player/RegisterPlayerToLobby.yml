@@ -1,4 +1,4 @@
-Join Lobby
+Player joins Lobby
 ---
 tags:
   - Player
@@ -25,6 +25,18 @@ responses:
     schema:
       type: object
       properties:
-        message:
+        hostID:
+          type: int
+          default: 0
+        isPlayerReady:
+          type: bool
+          default: false
+        lobbyID:
+          type: int
+          default: 1
+        userID:
+          type: int
+          default: 2
+        username:
           type: string
-          default: Beitritt erfolgreich
+          default: John Doe

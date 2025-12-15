@@ -4,6 +4,7 @@ class Player:
     def __init__(self):
         self.nickname = ""
         self.status = ""
+        self.playerList = []
         self.userID = Player._userID + 1
         Player._userID += 1
 
@@ -21,3 +22,9 @@ class Player:
 
     def getUserID(self):
         return self.userID
+
+    def setPlayer(self, player):
+        self.playerList.append(player)
+
+    def getPlayerList(self):
+        return self.playerList

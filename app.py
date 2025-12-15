@@ -12,6 +12,7 @@ from Swagger.SwaggerClasses.HostSpecification import HostSpecification
 from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecification
 from Swagger.SwaggerClasses.LobbySpecification import LobbySpecification
 from Swagger.SwaggerClasses.PlayerSpecification import PlayerSpecification
+from Sysfiles.Controller.PlayerController import PlayerController
 from Sysfiles.Controller.LobbyController import LobbyController
 from Sysfiles.Controller.SwaggerController import SwaggerDoc
 
@@ -46,6 +47,7 @@ swaggerInfo.setup(app, Api(app), "/api/v1/dwk/docs", "/api/v1/dwk")
 swaggerInfo.setBlueprint()
 
 lobbyController = LobbyController()
+playerController = PlayerController()
 
 
 # --- Request Logging ---
@@ -118,7 +120,7 @@ def hostLobby():
         return lobbyController.createLobby(), 201
     # Updating the created Lobby with chosen Values
     if request.method == 'POST':
-        lobbyController.saveCurrentLobby()
+        lobbyController.updateLobby()
     return http_status_message(200)
 
 
@@ -131,7 +133,7 @@ def lobbySettings(lobbyID):
 # Endpoint for exposing the current Playerlist for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 def playerList(lobbyID):
-    return lobbyController.getPlayerList(lobbyID)
+    return playerController.getPlayerList(lobbyID)
 
 
 # Endpoint for joining a Lobby with a given LobbyID
@@ -141,14 +143,14 @@ def join(lobbyID):
     if lobbyController.isPlayerLimitReached(lobbyID):
         return {"message": "Spielerlimit erreicht"}
     else:
-        return lobbyController.playerJoins(lobbyID, int(userID))
+        return playerController.playerJoins(lobbyID, int(userID))
 
 @app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
 def leave(lobbyID):
     hostID = request.form.get('hostID')
     userID = request.form.get('userID')
     if int(hostID) == 0:
-        lobbyController.removePlayer(lobbyID, int(userID))
+        playerController.removePlayer(lobbyID, int(userID))
         return {"message": f"Lobby #{lobbyID} wurde verlassen"}
     if int(hostID) > 0:
         lobbyController.closeLobby(lobbyID, int(hostID))

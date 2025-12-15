@@ -1,3 +1,9 @@
+import random
+import string
+
+from flask import request
+
+
 class GameController:
     def setGameStatus(self):
         return {

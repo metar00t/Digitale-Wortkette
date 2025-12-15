@@ -12,6 +12,7 @@ from Swagger.SwaggerClasses.HostSpecification import HostSpecification
 from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecification
 from Swagger.SwaggerClasses.LobbySpecification import LobbySpecification
 from Swagger.SwaggerClasses.PlayerSpecification import PlayerSpecification
+from Sysfiles.Controller.GameController import GameController
 from Sysfiles.Controller.PlayerController import PlayerController
 from Sysfiles.Controller.LobbyController import LobbyController
 from Sysfiles.Controller.SwaggerController import SwaggerDoc
@@ -48,6 +49,7 @@ swaggerInfo.setBlueprint()
 
 lobbyController = LobbyController()
 playerController = PlayerController()
+gameController = GameController()
 
 
 # --- Request Logging ---
@@ -160,18 +162,18 @@ def leave(lobbyID):
 
 @app.post("/api/v1/dwk/start-game")
 def startGame():
-    lobbyController.setGameStatus()
+    gameController.setGameStatus()
     return redirect(url_for('game'))
 
 
 @app.route("/api/v1/dwk/game", methods=['GET', 'POST'])
 def game():
     if request.method == 'GET':
-        return lobbyController.gameSession()
+        return gameController.gameSession()
     if request.method == 'POST':
-        result = lobbyController.checkInput()
+        result = gameController.checkInput()
         if result:
-            return lobbyController.addWord(result)
+            return gameController.addWord(result)
         else:
             return {}
 

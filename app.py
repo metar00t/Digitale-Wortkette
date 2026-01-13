@@ -48,7 +48,7 @@ swaggerInfo.setup(app, Api(app), "/api/v1/dwk/docs", "/api/v1/dwk")
 swaggerInfo.setBlueprint()
 
 lobbyController = LobbyController()
-playerController = PlayerController()
+playerController = PlayerController(lobbyController)
 gameController = GameController()
 
 
@@ -135,7 +135,7 @@ def lobbySettings(lobbyID):
 # Endpoint for exposing the current Playerlist for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 def playerList(lobbyID):
-    return playerController.getPlayerList(lobbyID)
+    return lobbyController.getListOfPlayers(lobbyID)
 
 
 # Endpoint for joining a Lobby with a given LobbyID

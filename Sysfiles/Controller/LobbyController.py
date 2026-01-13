@@ -9,13 +9,16 @@ from Sysfiles.Model.Player import Player
 class LobbyController:
     def __init__(self):
         self.host = None
+        self.player = None
         self.lobby = None
         self.qr = None
         self.createdLobbies = []
+        self.playerList = []
 
     def createLobby(self):
         self.lobby = Lobby()
         self.host = Host()
+        self.player = Player()
         self.qr = QrCodeController(f"/api/v1/dwk/lobby/{self.lobby.getLobbyID()}/join")
         createdLobby = {
             "lobbyID": self.lobby.getLobbyID(),
@@ -55,9 +58,12 @@ class LobbyController:
             "username": "Host",
             "isPlayerReady": "true"
         }
-        self.host.setPlayer(host)
+        self.playerList.append(host)
         self.createdLobbies.append(createdLobby)
         return createdLobby
+
+    def addPlayer(self, player):
+        self.playerList.append(player)
 
     def updateLobby(self):
         lobbyID = self.lobby.getLobbyID()
@@ -102,7 +108,7 @@ class LobbyController:
 
     def closeLobby(self, lobbyID, hostID):
         lobbies = self.createdLobbies
-        players = self.lobby.getPlayerList()
+        players = self.playerList
         for i, l in enumerate(lobbies):
             for j, p in enumerate(players):
                 if l["lobbyID"] == lobbyID and p["lobbyID"] == lobbyID and p["hostID"] == hostID:
@@ -121,15 +127,28 @@ class LobbyController:
         if foundLobby is None:
             return False
 
-        maxPlayers = int(foundLobby["maxPlayers"])
+        maxPlayers = foundLobby["maxPlayers"]
 
         count = 0
-        for player in self.host.getPlayerList():
+        for player in self.playerList:
             if player["lobbyID"] == lobbyID:
                 count += 1
 
-        if count >= maxPlayers:
+        if count >= int(maxPlayers):
             return True
         else:
             return False
 
+    def getListOfPlayers(self, lobbyID):
+        playerList = []
+        for data in self.playerList:
+            if lobbyID == data["lobbyID"]:
+                playerInfo = {
+                    "lobbyID": data["lobbyID"],
+                    "userID": data["userID"],
+                    "hostID": data["hostID"],
+                    "username": data["username"],
+                    "isPlayerReady": data["isPlayerReady"]
+                }
+                playerList.append(playerInfo)
+        return playerList

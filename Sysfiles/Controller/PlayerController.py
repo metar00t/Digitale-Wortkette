@@ -1,7 +1,6 @@
 from flask import request
 
 from Sysfiles.Model.Player import Player
-from Sysfiles.Controller.LobbyController import LobbyController
 
 class PlayerController:
     def __init__(self, lobbyController):

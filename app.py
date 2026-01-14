@@ -3,7 +3,7 @@ import time
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask, jsonify, request, redirect, url_for, g
-from flask_restful import Api, http_status_message
+from flask_restful import Api
 from flask_swagger import swagger
 
 from Config.config import Config
@@ -37,6 +37,7 @@ formatter = logging.Formatter(
     app.config["LOG_FORMAT"],
     datefmt=app.config["LOG_DATEFORMAT"]
 )
+
 # Set the formatters
 handler.setFormatter(formatter)
 # Add the handler to the Flask API
@@ -123,7 +124,7 @@ def hostLobby():
     # Updating the created Lobby with chosen Values
     if request.method == 'POST':
         lobbyController.updateLobby()
-    return http_status_message(200)
+    return {"status": "OK"}
 
 
 # Endpoint for exposing the chosen Lobby-Settings for a specified LobbyID
@@ -146,6 +147,7 @@ def join(lobbyID):
         return {"message": "Spielerlimit erreicht"}
     else:
         return playerController.playerJoins(lobbyID, int(userID))
+
 
 @app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
 def leave(lobbyID):

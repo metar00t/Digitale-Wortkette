@@ -7,6 +7,6 @@ class QrCodeController:
         self.text = text
 
     def generateQrCode(self):
-        img = qrcode.make(self.text, image_factory=qrcode.image.svg.SvgPathImage)
+        img = qrcode.make(self.text, image_factory=qrcode.image.svg.SvgPathImage, version=1)
         svg_string = img.to_string(encoding='unicode')
-        return f'{svg_string}'
+        return svg_string

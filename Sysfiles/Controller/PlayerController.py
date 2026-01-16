@@ -2,6 +2,7 @@ from flask import request
 
 from Sysfiles.Model.Player import Player
 
+
 class PlayerController:
     def __init__(self, lobbyController):
         self.player = None
@@ -36,7 +37,6 @@ class PlayerController:
         return False
 
     def updatePlayer(self, lobbyID, userID, username, status):
- #       self.player = Player()
         updatedPlayer = None
         for players in self.lobbyController.playerList:
             if players["userID"] == userID and players["lobbyID"] == lobbyID:
@@ -52,7 +52,6 @@ class PlayerController:
         return updatedPlayer
 
     def removePlayer(self, lobbyID, userID):
-#        self.player = Player()
         players = self.lobbyController.playerList
         for i, p in enumerate(players):
             if p["userID"] == userID and p["lobbyID"] == lobbyID:

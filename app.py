@@ -13,8 +13,8 @@ from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecifi
 from Swagger.SwaggerClasses.LobbySpecification import LobbySpecification
 from Swagger.SwaggerClasses.PlayerSpecification import PlayerSpecification
 from Sysfiles.Controller.GameController import GameController
-from Sysfiles.Controller.PlayerController import PlayerController
 from Sysfiles.Controller.LobbyController import LobbyController
+from Sysfiles.Controller.PlayerController import PlayerController
 from Sysfiles.Controller.SwaggerController import SwaggerDoc
 
 app = Flask(__name__)
@@ -38,9 +38,9 @@ formatter = logging.Formatter(
     datefmt=app.config["LOG_DATEFORMAT"]
 )
 
-# Set the formatters
+# Set the formatter
 handler.setFormatter(formatter)
-# Add the handler to the Flask API
+# Add Log handler to Flask
 app.logger.addHandler(handler)
 
 # --- Swagger & Controller ---
@@ -53,7 +53,7 @@ playerController = PlayerController(lobbyController)
 gameController = GameController()
 
 
-# --- Request Logging ---
+# --- Log incoming requests ---
 @app.before_request
 def incoming_request():
     """Store start time for request duration"""
@@ -63,7 +63,7 @@ def incoming_request():
         f"from {request.remote_addr}"
     )
 
-
+# --- Log processed requests ---
 @app.after_request
 def log_response(response):
     """Log completed request with duration and status code"""
@@ -148,15 +148,15 @@ def join(lobbyID):
     else:
         return playerController.playerJoins(lobbyID, int(userID))
 
-
+# Endpoint for Leaving the Lobby
 @app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
 def leave(lobbyID):
     hostID = request.form.get('hostID')
     userID = request.form.get('userID')
-    if int(hostID) == 0:
+    if int(hostID) == 0: # Gets called when a Player is leaving
         playerController.removePlayer(lobbyID, int(userID))
         return {"message": f"Lobby #{lobbyID} wurde verlassen"}
-    if int(hostID) > 0:
+    if int(hostID) > 0: # Gets called when the Host leaves the Lobby (Close Lobby)
         lobbyController.closeLobby(lobbyID, int(hostID))
         return {"message": f"Lobby #{lobbyID} wurde geschlossen"}
     return None
@@ -179,7 +179,7 @@ def game():
         else:
             return {}
 
-
+# Add Resources to Swagger
 swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")
 swaggerInfo.addResource(HostSpecification, "/api/v1/dwk/host/host-lobby")
 swaggerInfo.addResource(LobbySpecification, "/api/v1/dwk/lobby/<int:lobbyID>/playerList")

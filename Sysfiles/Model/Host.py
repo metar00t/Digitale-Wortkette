@@ -1,7 +1,7 @@
 from Sysfiles.Model.Player import Player
 
 class Host(Player):
-    _hostID = 0
+    _hostID : int = 0
 
     def __init__(self):
         super().__init__()

@@ -1,5 +1,5 @@
 class Player:
-    _userID = 0
+    _userID : int = 0
 
     def __init__(self):
         self.nickname = ""
@@ -7,10 +7,10 @@ class Player:
         self.userID = Player._userID + 1
         Player._userID += 1
 
-    def setNickname(self, nickname):
+    def setNickname(self, nickname : str):
         self.nickname = nickname
 
-    def setStatus(self, status):
+    def setStatus(self, status : bool):
         self.status = status
 
     def getNickname(self):

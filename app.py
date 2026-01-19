@@ -43,14 +43,15 @@ handler.setFormatter(formatter)
 # Add Log handler to Flask
 app.logger.addHandler(handler)
 
-# --- Swagger & Controller ---
+# --- Swagger Setup ---
 swaggerInfo = SwaggerDoc()
 swaggerInfo.setup(app, Api(app), "/api/v1/dwk/docs", "/api/v1/dwk")
 swaggerInfo.setBlueprint()
 
+# --- Controller Classes ---
 lobbyController = LobbyController()
 playerController = PlayerController(lobbyController)
-gameController = GameController()
+gameController = GameController(playerController)
 
 
 # --- Log incoming requests ---
@@ -62,6 +63,7 @@ def incoming_request():
         f"→ Incoming request: {request.method} {request.path} "
         f"from {request.remote_addr}"
     )
+
 
 # --- Log processed requests ---
 @app.after_request
@@ -148,6 +150,7 @@ def join(lobbyID):
     else:
         return playerController.playerJoins(lobbyID, int(userID))
 
+
 # Endpoint for Leaving the Lobby
 @app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
 def leave(lobbyID):
@@ -178,6 +181,7 @@ def game():
             return gameController.addWord(result)
         else:
             return {}
+
 
 # Add Resources to Swagger
 swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")

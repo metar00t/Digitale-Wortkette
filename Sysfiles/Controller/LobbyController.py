@@ -1,3 +1,5 @@
+from typing import Any
+
 from flask import request
 
 from Sysfiles.Controller.QRCodeController import QrCodeController
@@ -15,7 +17,12 @@ class LobbyController:
         self.createdLobbies = []
         self.playerList = []
 
-    def createLobby(self):
+    def createLobby(self) -> dict[str, int]:
+        """
+        Create a new Lobby
+        :return: Lobby Object
+        :rtype: dict[str,int]
+        """
         self.lobby = Lobby()
         self.host = Host()
         self.player = Player()
@@ -62,10 +69,22 @@ class LobbyController:
         self.createdLobbies.append(createdLobby)
         return createdLobby
 
-    def addPlayer(self, player):
+    def addPlayer(self, player: dict[str, int]) -> None:
+        """
+        Add Player to Lobby
+        :param player: Player Object
+        :type player: dict[str,int]
+        :return: Nothing
+        :rtype: None
+        """
         self.playerList.append(player)
 
-    def updateLobby(self):
+    def updateLobby(self) -> None:
+        """
+        Update the Lobby
+        :return: Nothing
+        :rtype: None
+        """
         lobbyID = self.lobby.getLobbyID()
         chosenSubject = request.form.get('subjectName')
         chosenMaxPlayers = request.form.get('maxPlayers')
@@ -83,7 +102,14 @@ class LobbyController:
                     self.lobby.setMaxGameLength(chosenMaxGameLength)
                 break
 
-    def getChosenLobbySettings(self, lobbyID):
+    def getChosenLobbySettings(self, lobbyID: int) -> dict[str, int]:
+        """
+        Get the current LobbySettings
+        :param lobbyID: ID of Lobby
+        :type lobbyID: int
+        :return: LobbySettings
+        :rtype: dict[str,int]
+        """
         for lobbies in self.createdLobbies:
             if lobbyID == lobbies["lobbyID"]:
                 return {
@@ -93,7 +119,12 @@ class LobbyController:
                 }
         return {}
 
-    def getLobbyList(self):
+    def getLobbyList(self) -> list[Any] | None:
+        """
+        Get the current Lobbies
+        :return: List of active Lobbies
+        :rtype: list[Any]
+        """
         lobbyList = []
         for data in self.createdLobbies:
             lobbyInfo = {
@@ -106,7 +137,16 @@ class LobbyController:
             return None
         return lobbyList
 
-    def closeLobby(self, lobbyID, hostID):
+    def closeLobby(self, lobbyID: int, hostID: int) -> bool:
+        """
+        Close Lobby
+        :param lobbyID: ID of Lobby
+        :type lobbyID: int
+        :param hostID: ID of Host
+        :type hostID: int
+        :return: Response if the operation was successful or not
+        :rtype: bool
+        """
         lobbies = self.createdLobbies
         players = self.playerList
         for i, l in enumerate(lobbies):
@@ -117,7 +157,14 @@ class LobbyController:
                     return True
         return False
 
-    def isPlayerLimitReached(self, lobbyID):
+    def isPlayerLimitReached(self, lobbyID: int) -> bool:
+        """
+        Player Limit Validation
+        :param lobbyID: ID of Lobby
+        :type lobbyID: int
+        :return: True if PlayerLimit has been reached and False if not
+        :rtype: bool
+        """
         foundLobby = None
         for l in self.createdLobbies:
             if l["lobbyID"] == lobbyID:
@@ -139,7 +186,14 @@ class LobbyController:
         else:
             return False
 
-    def getListOfPlayers(self, lobbyID):
+    def getListOfPlayers(self, lobbyID: int) -> list[Any]:
+        """
+        Get List of Players in Lobby
+        :param lobbyID: ID of Lobby
+        :type lobbyID: int
+        :return: List of Players in Lobby
+        :rtype: list[Any]
+        """
         playerList = []
         for data in self.playerList:
             if lobbyID == data["lobbyID"]:

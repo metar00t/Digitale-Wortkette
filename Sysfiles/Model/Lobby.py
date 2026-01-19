@@ -1,5 +1,5 @@
 class Lobby:
-    _maxLobbyID = 0
+    _maxLobbyID : int = 0
     _lobbyList = []
 
     def __init__(self):
@@ -9,15 +9,14 @@ class Lobby:
         self.subject = ""
         self.maxPlayers = 0
         self.maxGameLength = 0
-        self.wordList = []
 
-    def setSubject(self, subject):
+    def setSubject(self, subject : str):
         self.subject = subject
 
-    def setMaxPlayers(self, maxPlayers):
+    def setMaxPlayers(self, maxPlayers : int):
         self.maxPlayers = maxPlayers
 
-    def setMaxGameLength(self, maxGameLength):
+    def setMaxGameLength(self, maxGameLength : int):
         self.maxGameLength = maxGameLength
 
     def getLobbyID(self):
@@ -31,9 +30,3 @@ class Lobby:
 
     def getMaxGameLength(self):
         return self.maxGameLength
-
-    def setCurrentWord(self, word):
-        self.wordList.append(word)
-
-    def getWordList(self):
-        return self.wordList

@@ -20,7 +20,7 @@ class PlayerController:
         :rtype: dict[str,int] | dict[str,str]
         """
         self.player = Player()
-        username = request.form['nickname']
+        username : str = request.form['nickname']
         status = request.form.get('isPlayerReady')
         if username.strip() == "":
             return {"message": "Bitte gib einen Usernamen ein"}
@@ -30,7 +30,7 @@ class PlayerController:
         if playerExists:
             return self.updatePlayer(lobbyID, userID, username, status)
         else:
-            newPlayer = {
+            newPlayer : dict[str,int] = {
                 "lobbyID": lobbyID,
                 "userID": self.player.getUserID(),
                 "hostID": 0,
@@ -57,7 +57,7 @@ class PlayerController:
         return False
 
 
-    def updatePlayer(self, lobbyID : int, userID : int, username : str, status : bool) -> dict[str,int]:
+    def updatePlayer(self, lobbyID : int, userID : int, username : str, status : str) -> dict[str,int]:
         """
         Updates the Player
         :param lobbyID: ID of Lobby
@@ -67,7 +67,7 @@ class PlayerController:
         :param username: Username to Change
         :type username: str
         :param status: Status of Player
-        :type status: bool
+        :type status: str
         :return: Updated Player
         :rtype: dict[str,int]
         """

@@ -27,7 +27,7 @@ class LobbyController:
         self.host = Host()
         self.player = Player()
         self.qr = QrCodeController(f"dwk://player/{self.lobby.getLobbyID()}/join")
-        createdLobby = {
+        createdLobby : dict[str,int] = {
             "lobbyID": self.lobby.getLobbyID(),
             "subjectName": [
                 "Tiere",
@@ -58,7 +58,7 @@ class LobbyController:
             "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}"),
             "userID": self.host.getUserID()
         }
-        host = {
+        host : dict[str,int] = {
             "lobbyID": self.lobby.getLobbyID(),
             "userID": self.host.getUserID(),
             "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}"),

@@ -10,7 +10,7 @@ class Player:
     def setNickname(self, nickname : str):
         self.nickname = nickname
 
-    def setStatus(self, status : bool):
+    def setStatus(self, status : str):
         self.status = status
 
     def getNickname(self):

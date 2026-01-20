@@ -8,8 +8,7 @@ class PlayerController:
         self.player = None
         self.lobbyController = lobbyController
 
-
-    def playerJoins(self, lobbyID : int, userID : int) -> dict[str,int] | dict[str,str]:
+    def playerJoins(self, lobbyID: int, userID: int) -> dict[str, int] | dict[str, str]:
         """
         Adds Player to the chosen Lobby
         :param lobbyID: ID of chosen Lobby
@@ -20,17 +19,17 @@ class PlayerController:
         :rtype: dict[str,int] | dict[str,str]
         """
         self.player = Player()
-        username : str = request.form['nickname']
+        username: str = request.form['nickname']
         status = request.form.get('isPlayerReady')
         if username.strip() == "":
             return {"message": "Bitte gib einen Usernamen ein"}
         self.player.setNickname(username)
         self.player.setStatus(status)
-        playerExists : bool = self.hasPlayer(userID, lobbyID)
+        playerExists: bool = self.hasPlayer(userID, lobbyID)
         if playerExists:
             return self.updatePlayer(lobbyID, userID, username, status)
         else:
-            newPlayer : dict[str,int] = {
+            newPlayer: dict[str, int] = {
                 "lobbyID": lobbyID,
                 "userID": self.player.getUserID(),
                 "hostID": 0,
@@ -40,8 +39,7 @@ class PlayerController:
             self.lobbyController.addPlayer(newPlayer)
             return newPlayer
 
-
-    def hasPlayer(self, userID : int, lobbyID : int) -> bool:
+    def hasPlayer(self, userID: int, lobbyID: int) -> bool:
         """
         Checks if Player already exists in the current Lobby
         :param userID: ID of User
@@ -56,8 +54,7 @@ class PlayerController:
                 return True
         return False
 
-
-    def updatePlayer(self, lobbyID : int, userID : int, username : str, status : str) -> dict[str,int]:
+    def updatePlayer(self, lobbyID: int, userID: int, username: str, status: str) -> dict[str, int]:
         """
         Updates the Player
         :param lobbyID: ID of Lobby
@@ -85,8 +82,7 @@ class PlayerController:
                 }
         return updatedPlayer
 
-
-    def removePlayer(self, lobbyID : int, userID : int) -> bool:
+    def removePlayer(self, lobbyID: int, userID: int) -> bool:
         """
         Removes Player from Lobby
         :param lobbyID: ID of Lobby

@@ -8,15 +8,14 @@ Die Nutzung des Backends erfolgt durch die Composer Datei, nachdem dieses Reposi
 
 ## Technologien:
 - REST-API (Flask)
-- Webserver (Flask)
+- Webserver (Werkzeug)
 - Docker
-- API-Endpoint Documentation (Swagger+UI)
+- API-Endpoint Dokumentation mit Swagger
 
-## Benötigte Bibliotheken zum erfolgreichen bauen der Dockerdatei ([Siehe requirements.txt Datei zur Referenz](requirements.txt)):
+## Benötigte Bibliotheken (und Version) für [Docker](requirements.txt):
 - Flask~=3.1.2
 - Flask-RESTful~=0.3.10
 - flask-swagger~=0.2.14
-- configparser~=7.2.0
 - qrcode~=8.2
 - django-qrcode~=0.3
 - flask-swagger-ui~=5.21.0

@@ -131,19 +131,19 @@ def hostLobby():
 
 # Endpoint for exposing the chosen Lobby-Settings for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
-def lobbySettings(lobbyID):
+def lobbySettings(lobbyID: int) -> dict[str,int]:
     return lobbyController.getChosenLobbySettings(lobbyID)
 
 
 # Endpoint for exposing the current Playerlist for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
-def playerList(lobbyID):
+def playerList(lobbyID: int):
     return lobbyController.getListOfPlayers(lobbyID)
 
 
 # Endpoint for joining a Lobby with a given LobbyID
 @app.post("/api/v1/dwk/player/<int:lobbyID>/join")
-def join(lobbyID):
+def join(lobbyID: int) -> dict[str,str] | dict[str,int]:
     userID = request.form.get('userID')
     if lobbyController.isPlayerLimitReached(lobbyID):
         return {"message": "Spielerlimit erreicht"}
@@ -153,13 +153,13 @@ def join(lobbyID):
 
 # Endpoint for Leaving the Lobby
 @app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
-def leave(lobbyID):
+def leave(lobbyID: int) -> dict[str, str] | None:
     hostID = request.form.get('hostID')
     userID = request.form.get('userID')
-    if int(hostID) == 0: # Gets called when a Player is leaving
+    if int(hostID) == 0:  # Gets called when a Player is leaving
         playerController.removePlayer(lobbyID, int(userID))
         return {"message": f"Lobby #{lobbyID} wurde verlassen"}
-    if int(hostID) > 0: # Gets called when the Host leaves the Lobby (Close Lobby)
+    if int(hostID) > 0:  # Gets called when the Host leaves the Lobby (Close Lobby)
         lobbyController.closeLobby(lobbyID, int(hostID))
         return {"message": f"Lobby #{lobbyID} wurde geschlossen"}
     return None
@@ -181,6 +181,7 @@ def game():
             return gameController.addWord(result)
         else:
             return {}
+    return None  # Temporary Return Statement
 
 
 # Add Resources to Swagger

@@ -3,6 +3,7 @@ import time
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask, jsonify, request, redirect, url_for, g
+from flask_pyjwt import AuthManager
 from flask_restful import Api
 from flask_swagger import swagger
 
@@ -26,6 +27,8 @@ handler = RotatingFileHandler(
     backupCount=app.config["LOG_BACKUP_COUNT"],
     encoding=app.config["LOG_ENCODING"],
 )
+# Initializing the Authenticator Manager
+auth_manager = AuthManager(app,"./Config/.env")
 
 # Set the LogLevel (Level-Severity is defined in the Documentation) for both in the loglevel variable
 loglevel = app.config["LOG_LEVEL"]
@@ -122,7 +125,7 @@ def home():
 def hostLobby():
     # Create a new Lobby with Default Values
     if request.method == 'GET':
-        return lobbyController.createLobby(), 201
+        return lobbyController.createLobby(auth_manager), 201
     # Updating the created Lobby with chosen Values
     if request.method == 'POST':
         lobbyController.updateLobby()
@@ -148,7 +151,7 @@ def join(lobbyID: int) -> dict[str,str] | dict[str,int]:
     if lobbyController.isPlayerLimitReached(lobbyID):
         return {"message": "Spielerlimit erreicht"}
     else:
-        return playerController.playerJoins(lobbyID, int(userID))
+        return playerController.playerJoins(lobbyID, int(userID), auth_manager)
 
 
 # Endpoint for Leaving the Lobby

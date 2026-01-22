@@ -1,6 +1,7 @@
 import logging
 
 class Config:
+    # Logger Config
     LOG_FILE = "Logger/Logs/Backend.log"
     LOG_LEVEL = logging.DEBUG
     LOG_FORMAT = "%(asctime)s [%(funcName)s] %(levelname)s %(message)s"

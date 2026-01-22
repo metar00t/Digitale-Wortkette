@@ -8,9 +8,10 @@ class PlayerController:
         self.player = None
         self.lobbyController = lobbyController
 
-    def playerJoins(self, lobbyID: int, userID: int) -> dict[str, int] | dict[str, str]:
+    def playerJoins(self, lobbyID: int, userID: int, auth_manager_object) -> dict[str, int] | dict[str, str]:
         """
         Adds Player to the chosen Lobby
+        :param auth_manager_object: Using the Authentication Manager from the main Application
         :param lobbyID: ID of chosen Lobby
         :type lobbyID: int
         :param userID: ID of the joining User
@@ -26,6 +27,10 @@ class PlayerController:
         self.player.setNickname(username)
         self.player.setStatus(status)
         playerExists: bool = self.hasPlayer(userID, lobbyID)
+        auth_token = auth_manager_object.auth_token(
+            subject=username,
+            scope={"admin":False}
+        )
         if playerExists:
             return self.updatePlayer(lobbyID, userID, username, status)
         else:
@@ -34,7 +39,8 @@ class PlayerController:
                 "userID": self.player.getUserID(),
                 "hostID": 0,
                 "username": self.player.getNickname(),
-                "isPlayerReady": self.player.getStatus()
+                "isPlayerReady": self.player.getStatus(),
+                "auth_token": auth_token.signed
             }
             self.lobbyController.addPlayer(newPlayer)
             return newPlayer

@@ -17,7 +17,7 @@ class LobbyController:
         self.createdLobbies = []
         self.playerList = []
 
-    def createLobby(self) -> dict[str, int]:
+    def createLobby(self, auth_manager_object) -> dict[str, int]:
         """
         Create a new Lobby
         :return: Lobby Object
@@ -27,6 +27,10 @@ class LobbyController:
         self.host = Host()
         self.player = Player()
         self.qr = QrCodeController(f"dwk://player/{self.lobby.getLobbyID()}/join")
+        auth_token = auth_manager_object.auth_token(
+            subject="Host",
+            scope={"admin": True}
+        )
         createdLobby : dict[str,int] = {
             "lobbyID": self.lobby.getLobbyID(),
             "subjectName": [
@@ -63,7 +67,8 @@ class LobbyController:
             "userID": self.host.getUserID(),
             "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}"),
             "username": "Host",
-            "isPlayerReady": "true"
+            "isPlayerReady": "true",
+            "auth_token" : auth_token.signed
         }
         self.playerList.append(host)
         self.createdLobbies.append(createdLobby)
@@ -202,7 +207,8 @@ class LobbyController:
                     "userID": data["userID"],
                     "hostID": data["hostID"],
                     "username": data["username"],
-                    "isPlayerReady": data["isPlayerReady"]
+                    "isPlayerReady": data["isPlayerReady"],
+                    "auth_token": data["auth_token"]
                 }
                 playerList.append(playerInfo)
         return playerList

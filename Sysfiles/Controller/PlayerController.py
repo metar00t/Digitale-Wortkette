@@ -28,8 +28,9 @@ class PlayerController:
         self.player.setStatus(status)
         playerExists: bool = self.hasPlayer(userID, lobbyID)
         auth_token = auth_manager_object.auth_token(
-            subject=username,
-            scope={"admin":False}
+            subject=self.player.getUserID(),
+            scope={"Host":False},
+            custom_claim="Flask_PyJWT"
         )
         if playerExists:
             return self.updatePlayer(lobbyID, userID, username, status)

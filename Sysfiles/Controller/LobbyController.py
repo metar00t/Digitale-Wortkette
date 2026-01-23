@@ -28,8 +28,8 @@ class LobbyController:
         self.player = Player()
         self.qr = QrCodeController(f"dwk://player/{self.lobby.getLobbyID()}/join")
         auth_token = auth_manager_object.auth_token(
-            subject="Host",
-            scope={"admin": True}
+            subject= self.host.getUserID(),
+            scope={"Host": True}
         )
         createdLobby : dict[str,int] = {
             "lobbyID": self.lobby.getLobbyID(),

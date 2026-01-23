@@ -17,12 +17,6 @@ class GameController:
         }
 
 
-    def setPlayerOrder(self):
-        playerList = self.playerController.lobbyController.playerList
-        for player in playerList:
-            pass
-
-
     def gameSession(self):
         currentWordList = self.wordList
         if not currentWordList:
@@ -37,13 +31,13 @@ class GameController:
                 "username": self.playerController.player.getNickname()
             },
             "playerStatus": [
+                "connected",
                 "disconnected",
                 "selected",
                 "next",
-                "connected",
                 "suspend round"
             ],
-            "wordsPerMinute": float # To be determined if still being used
+            "wordsPerMinute": float # Nice To Have
         }
 
 
@@ -56,7 +50,7 @@ class GameController:
         for checkWord in currentWord:
             if checkWord == chosenWord:
                 return {"message":"Dieses Wort wurde bereits verwendet"}
-            return chosenWord
+        return chosenWord
 
 
     def addWord(self, word):

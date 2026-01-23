@@ -13,6 +13,7 @@ Die Nutzung des Backends erfolgt durch die Composer Datei, nachdem dieses Reposi
 - API-Endpoint Dokumentation mit Swagger
 
 ## Benötigte Bibliotheken (und Version) für [Docker](requirements.txt):
+- flask-pyjwt~=1.0.0
 - Flask~=3.1.2
 - Flask-RESTful~=0.3.10
 - flask-swagger~=0.2.14

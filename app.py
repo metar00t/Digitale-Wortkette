@@ -12,7 +12,8 @@ from Swagger.SwaggerClasses.HomeSpecification import HomeSpecification
 from Swagger.SwaggerClasses.HostSpecification import HostSpecification
 from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecification
 from Swagger.SwaggerClasses.LobbySpecification import LobbySpecification
-from Swagger.SwaggerClasses.PlayerSpecification import PlayerSpecification
+from Swagger.SwaggerClasses.PlayerJoins import PlayerJoins
+from Swagger.SwaggerClasses.PlayerLeaves import PlayerLeaves
 from Sysfiles.Controller.GameController import GameController
 from Sysfiles.Controller.LobbyController import LobbyController
 from Sysfiles.Controller.PlayerController import PlayerController
@@ -27,7 +28,7 @@ handler = RotatingFileHandler(
     backupCount=app.config["LOG_BACKUP_COUNT"],
     encoding=app.config["LOG_ENCODING"],
 )
-# Initializing the Authenticator Manager
+# Initializing the Authenticator Manager with the dotenv FilePath
 auth_manager = AuthManager(app,"./Config/.env")
 
 # Set the LogLevel (Level-Severity is defined in the Documentation) for both in the loglevel variable
@@ -192,7 +193,8 @@ swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")
 swaggerInfo.addResource(HostSpecification, "/api/v1/dwk/host/host-lobby")
 swaggerInfo.addResource(LobbySpecification, "/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 swaggerInfo.addResource(LobbySettingSpecification, "/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
-swaggerInfo.addResource(PlayerSpecification, "/api/v1/dwk/player/<int:lobbyID>/join")
+swaggerInfo.addResource(PlayerJoins, "/api/v1/dwk/player/<int:lobbyID>/join")
+swaggerInfo.addResource(PlayerLeaves, "/api/v1/dwk/player/<int:lobbyID>/leave")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

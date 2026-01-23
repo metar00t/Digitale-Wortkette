@@ -1,0 +1,31 @@
+Player leaves Lobby
+---
+tags:
+  - Player
+parameters:
+  - in: path
+    name: lobbyID
+    type: integer
+    required: true
+    description: The LobbyID from which the Player is supposed to be removed from
+responses:
+  200:
+    description: Player successfully left
+    schema:
+      type: object
+      properties:
+        hostID:
+          type: int
+          default: 0
+        isPlayerReady:
+          type: bool
+          default: false
+        lobbyID:
+          type: int
+          default: 1
+        userID:
+          type: int
+          default: 2
+        username:
+          type: string
+          default: John Doe

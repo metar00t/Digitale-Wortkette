@@ -169,22 +169,25 @@ def leave(lobbyID: int) -> dict[str, str] | None:
     return None
 
 
-@app.post("/api/v1/dwk/start-game")
-def startGame():
-    gameController.setGameStatus()
-    return redirect(url_for('game'))
+@app.post("/api/v1/dwk/game/<lobbyID:int>/start")
+def startGame(lobbyID:int):
+    gameController.setGameStatus(lobbyID)
+    return {"message":"OK"}
 
 
-@app.route("/api/v1/dwk/game", methods=['GET', 'POST'])
-def game():
+@app.route("/api/v1/dwk/game/<lobbyID:int>/session", methods=['GET', 'POST'])
+def game(lobbyID:int):
     if request.method == 'GET':
         return gameController.gameSession()
     if request.method == 'POST':
-        result = gameController.checkInput()
+        chosenWord = request.form['wordInput']
+        result = gameController.doesWordAlreadyExist(chosenWord)
         if result:
-            return gameController.addWord(result)
-        else:
             return {}
+        else:
+            gameController.addWord(chosenWord)
+            gameController.updateTurnOrder(lobbyID)
+            return gameController.gameSession()
     return None  # Temporary Return Statement
 
 

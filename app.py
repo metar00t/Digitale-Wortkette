@@ -169,13 +169,13 @@ def leave(lobbyID: int) -> dict[str, str] | None:
     return None
 
 
-@app.post("/api/v1/dwk/game/<lobbyID:int>/start")
+@app.post("/api/v1/dwk/game/<int:lobbyID>/start")
 def startGame(lobbyID:int):
     gameController.setGameStatus(lobbyID)
     return {"message":"OK"}
 
 
-@app.route("/api/v1/dwk/game/<lobbyID:int>/session", methods=['GET', 'POST'])
+@app.route("/api/v1/dwk/game/<int:lobbyID>/session", methods=['GET', 'POST'])
 def game(lobbyID:int):
     if request.method == 'GET':
         return gameController.gameSession()

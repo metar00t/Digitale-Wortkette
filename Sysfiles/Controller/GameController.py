@@ -14,29 +14,27 @@ class GameController:
             if lobbyID == data["lobbyID"]:
                 data["hasGameStarted"] = True
                 break
+        self.game.setTime(int(self.playerController.lobbyController.lobby.getMaxGameLength()) * 60)
 
     def timer(self):
-        while self.game.getTime():
-            mins,secs = divmod(self.game.getTime(),60)
-            timer = '{:02d}:{:02d}'.format(mins, secs)
+        while self.game.getTime() > 0:
             time.sleep(1)
-            timer -= 1
-            self.game.setTime(timer)
-        return {"message":"Time's up"}
+            self.game.setTime(self.game.getTime() - 1)
+        return {"message": "Time's up"}
 
 
     def gameSession(self):
         currentWordList = self.wordList
-        recentWord = currentWordList[-1]
-        self.game.setTime(self.playerController.lobby.getMaxGameLength()*60)
+        recentWord = currentWordList[-1] if currentWordList else ""
+        self.timer()
         return {
-            "chosenSubject": self.playerController.lobby.getSubject(),
+            "chosenSubject": self.playerController.lobbyController.lobby.getSubject(),
             "time": self.game.getTime(),
             "currentLetter": recentWord[:1],
             "usedWords" : self.wordList,
             "previousWord": {
                 "wordUsed": recentWord,
-                "username": self.playerController.player.getNickname()
+                "username": self.playerController.lobbyController.player.getNickname()
             },
        #     "playerStatus": [
          #       "connected",

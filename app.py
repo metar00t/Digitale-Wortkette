@@ -181,13 +181,13 @@ def game(lobbyID:int):
         return gameController.gameSession()
     if request.method == 'POST':
         chosenWord = request.form['wordInput']
-        result = gameController.doesWordAlreadyExist(chosenWord)
+        result = gameController.isInputValid(chosenWord)
         if result:
-            return {}
-        else:
             gameController.addWord(chosenWord)
             gameController.updateTurnOrder(lobbyID)
             return gameController.gameSession()
+        else:
+            return {"message":"invalid input"}
     return None  # Temporary Return Statement
 
 

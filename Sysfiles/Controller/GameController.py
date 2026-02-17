@@ -44,14 +44,20 @@ class GameController:
            # ]
         }
 
+    def isInputValid(self, chosenWord: str) -> bool:
+        chosenWord = chosenWord.strip()
 
-    def doesWordAlreadyExist(self, chosenWord) -> bool:
-        currentWord = self.wordList
-        for checkWord in currentWord:
-            if checkWord == chosenWord:
-                return False
-        return True
+        if not chosenWord:
+            return False
 
+        if chosenWord.lower() in (word.lower() for word in self.wordList):
+            return False
+
+        if not self.wordList:
+            return True
+
+        previousWord = self.wordList[-1]
+        return chosenWord[0].lower() == previousWord[-1].lower()
 
     def addWord(self, word:str) -> None:
         self.wordList.append(word)

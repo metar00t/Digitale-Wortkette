@@ -1,62 +1,63 @@
-import random
-import string
+import time
 
-from flask import request
-
+from Sysfiles.Model.Game import Game
 
 class GameController:
     def __init__(self, playerController):
         self.playerController = playerController
+        self.game = Game()
         self.wordList = []
 
+    # Setting the Status of the Game Session to true
+    def setGameStatus(self,lobbyID:int):
+        for data in self.playerController.lobbyController.createdLobbies:
+            if lobbyID == data["lobbyID"]:
+                data["hasGameStarted"] = True
+                break
 
-    def setGameStatus(self):
-        return {
-            "hasGameStarted": bool,
-            "firstLetter": random.choice(string.ascii_letters)
-        }
+    def timer(self):
+        while self.game.getTime():
+            mins,secs = divmod(self.game.getTime(),60)
+            timer = '{:02d}:{:02d}'.format(mins, secs)
+            time.sleep(1)
+            timer -= 1
+            self.game.setTime(timer)
+        return {"message":"Time's up"}
 
 
     def gameSession(self):
         currentWordList = self.wordList
-        if not currentWordList:
-            return {}, 204
-        currentWord = currentWordList[-1]
+        recentWord = currentWordList[-1]
+        self.game.setTime(self.playerController.lobby.getMaxGameLength()*60)
         return {
             "chosenSubject": self.playerController.lobby.getSubject(),
-            "timer": self.playerController.lobby.getMaxGameLength(),
-            "currentLetter": currentWord[:1],
-            "previousWords": {
-                "wordUsed": currentWord,
+            "time": self.game.getTime(),
+            "currentLetter": recentWord[:1],
+            "usedWords" : self.wordList,
+            "previousWord": {
+                "wordUsed": recentWord,
                 "username": self.playerController.player.getNickname()
             },
-            "playerStatus": [
-                "connected",
-                "disconnected",
-                "selected",
-                "next",
-                "suspend round"
-            ],
-            "wordsPerMinute": float # Nice To Have
+       #     "playerStatus": [
+         #       "connected",
+          #      "disconnected"
+           # ]
         }
 
 
-    def checkInput(self):
-        # request.form['wordInput']
-        # request.form.get('wordInput')
-        chosenWord = request.form['wordInput']
+    def doesWordAlreadyExist(self, chosenWord) -> bool:
         currentWord = self.wordList
-        lastWord = self.wordList[-1]
         for checkWord in currentWord:
             if checkWord == chosenWord:
-                return {"message":"Dieses Wort wurde bereits verwendet"}
-        return chosenWord
+                return False
+        return True
 
 
-    def addWord(self, word):
+    def addWord(self, word:str) -> None:
         self.wordList.append(word)
 
 
-    def getWordList(self):
-        return self.wordList
-
+    def updateTurnOrder(self,lobbyID:int):
+        gamePlayerList = self.playerController.lobbyController.getListOfPlayers(lobbyID)
+        gamePlayerList.append(gamePlayerList.pop(gamePlayerList.index(gamePlayerList[0])))
+        return gamePlayerList

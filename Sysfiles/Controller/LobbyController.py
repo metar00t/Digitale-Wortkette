@@ -33,6 +33,7 @@ class LobbyController:
         )
         createdLobby : dict[str,int] = {
             "lobbyID": self.lobby.getLobbyID(),
+            "hasGameStarted": False,
             "subjectName": [
                 "Tiere",
                 "Städte",

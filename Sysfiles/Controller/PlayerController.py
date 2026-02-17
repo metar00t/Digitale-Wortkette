@@ -21,24 +21,24 @@ class PlayerController:
         """
         self.player = Player()
         username: str = request.form['nickname']
-        status = request.form.get('isPlayerReady')
+        isPlayerReady = request.form.get('isPlayerReady')
         if username.strip() == "":
             return {"message": "Bitte gib einen Usernamen ein"}
         self.player.setNickname(username)
-        self.player.setStatus(status)
-        playerExists: bool = self.hasPlayer(userID, lobbyID)
+        self.player.setStatus(isPlayerReady)
+        doesPlayerExists: bool = self.hasPlayer(userID, lobbyID)
         auth_token = auth_manager_object.auth_token(
             subject=self.player.getUserID(),
             scope={"Host":False},
-            custom_claim="Flask_PyJWT"
         )
-        if playerExists:
-            return self.updatePlayer(lobbyID, userID, username, status)
+        if doesPlayerExists:
+            return self.updatePlayer(lobbyID, userID, username, isPlayerReady)
         else:
             newPlayer: dict[str, int] = {
                 "lobbyID": lobbyID,
                 "userID": self.player.getUserID(),
                 "hostID": 0,
+                "playerStatus": "connected",
                 "username": self.player.getNickname(),
                 "isPlayerReady": self.player.getStatus(),
                 "auth_token": auth_token.signed

@@ -2,7 +2,7 @@
 __pycache__/
 *.py[codz]
 *$py.class
-.idea
+.idea/
 
 # C extensions
 *.so
@@ -206,3 +206,4 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+.vscode/settings.json

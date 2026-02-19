@@ -87,7 +87,7 @@ class LobbyController:
 
     def updateLobby(self) -> None:
         """
-        Update the Lobby
+        Updates the Lobby Metadata
         :return: Nothing
         :rtype: None
         """
@@ -95,6 +95,7 @@ class LobbyController:
         chosenSubject = request.form.get('subjectName')
         chosenMaxPlayers = request.form.get('maxPlayers')
         chosenMaxGameLength = request.form.get('maxGameLength')
+        hasGameStarted = request.form.get('hasGameStarted')
         for lobbies in self.createdLobbies:
             if lobbyID == lobbies["lobbyID"]:
                 if chosenSubject is not None:
@@ -106,6 +107,8 @@ class LobbyController:
                 if chosenMaxGameLength is not None:
                     lobbies["maxGameLength"] = chosenMaxGameLength
                     self.lobby.setMaxGameLength(chosenMaxGameLength)
+                if hasGameStarted is not None:
+                    lobbies["hasGameStarted"] = hasGameStarted
                 break
 
     def getChosenLobbySettings(self, lobbyID: int) -> dict[str, int]:
@@ -121,7 +124,8 @@ class LobbyController:
                 return {
                     "chosenSubject": lobbies["subjectName"],
                     "chosenMaxPlayers": lobbies["maxPlayers"],
-                    "chosenMaxGameLength": lobbies["maxGameLength"]
+                    "chosenMaxGameLength": lobbies["maxGameLength"],
+                    "hasGameStarted": lobbies["hasGameStarted"]
                 }
         return {}
 

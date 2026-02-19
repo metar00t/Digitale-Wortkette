@@ -10,6 +10,7 @@ from flask_swagger import swagger
 from Config.config import Config
 from Swagger.SwaggerClasses.HomeSpecification import HomeSpecification
 from Swagger.SwaggerClasses.HostSpecification import HostSpecification
+from Swagger.SwaggerClasses.AddWordSpecification import AddWordSpecification
 from Swagger.SwaggerClasses.GameStartSpecification import GameStartSpecification
 from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecification
 from Swagger.SwaggerClasses.LobbySpecification import LobbySpecification
@@ -180,7 +181,7 @@ def game(lobbyID: int):
             gameController.updateTurnOrder(lobbyID)
             return gameController.gameSession(lobbyID)
         else:
-            return {"message": "invalid input"}
+            return {"message": "invalid input"}, 418
     return None  # Temporary Return Statement
 
 
@@ -198,5 +199,6 @@ swaggerInfo.addResource(PlayerLeaves, "/api/v1/dwk/player/<int:lobbyID>/leave")
 swaggerInfo.addResource(
     GameStartSpecification, "/api/v1/dwk/game/<int:lobbyID>/session"
 )
+swaggerInfo.addResource(AddWordSpecification, "/api/v1/dwk/game/<int:lobbyID>/session")
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

@@ -167,12 +167,14 @@ def leave(lobbyID: int) -> dict[str, str] | None:
     return None
 
 
+# Endpoint for the Game Logic
 @app.route("/api/v1/dwk/game/<int:lobbyID>/session", methods=["GET", "POST"])
 def game(lobbyID: int):
     if request.method == "GET":
         return gameController.gameSession(lobbyID)
     if request.method == "POST":
         chosenWord = request.form["wordInput"]
+        # TODO: Uncomment Line 178 in Prod and comment Line 179 out
         # userID = request.form.get("userID")
         userID = request.form["userID"]
         result = gameController.isInputValid(chosenWord, lobbyID)

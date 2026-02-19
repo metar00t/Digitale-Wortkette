@@ -9,6 +9,12 @@ parameters:
     required: true
     description: Nickname of Player
   - in: formData
+    name: userID
+    type: integer
+    required: true
+    default: 2
+    description: ID to identify the User to
+  - in: formData
     name: isPlayerReady
     type: boolean
     required: true

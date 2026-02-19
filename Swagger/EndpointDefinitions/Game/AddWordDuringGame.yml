@@ -1,0 +1,63 @@
+Submit a Word
+---
+tags:
+  - Game
+produces:
+  - application/json
+parameters:
+  - in: path
+    name: lobbyID
+    type: integer
+    required: true
+    description: ID of the Lobby
+  - in: formData
+    name: userID
+    type: integer
+    required: true
+    default: 2
+  - in: formData
+    name: wordInput
+    type: string
+    default: "Hello"
+responses:
+  200:
+    description: Game started
+    schema:
+      type: object
+      properties:
+        gameID:
+          type: integer
+          default: 1
+          description: gameID
+        chosenSubject:
+          type: string
+          default: Tiere
+          description: The Chosen Subject when creating the Lobby
+        isTimeUp:
+          type: boolean
+          default: false
+        currentLetter:
+          type: string
+          default: l
+          description: Last Letter from the previous Word
+        usedWords:
+          type: array
+          description: List of already used Words
+          items:
+            type: string
+            enum: ["Hello", "Oval"]
+        previousWord:
+          properties:
+            username:
+              type: string
+              default: "John Doe"
+            wordUsed:
+              type: string
+              default: "Oval"
+  418:
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          default: Invalid Input

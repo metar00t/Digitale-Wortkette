@@ -63,13 +63,10 @@ class GameController:
         def countdown():
             while entry["game"].getTime() > 0 and entry["timer_running"]:
                 mins, secs = divmod(entry["game"].getTime(), 60)
-                # Optional
-                print(f"Lobby {lobbyID} - Time remaining: {mins:02d}:{secs:02d}")
                 time.sleep(1)
                 entry["game"].setTime(entry["game"].getTime() - 1)
             entry["timer_running"] = False
             entry["game"].callbackTimer()
-            print(f"Lobby {lobbyID} - Time's up!")
 
         # Start in a daemon thread
         timer_thread = threading.Thread(target=countdown, daemon=True)

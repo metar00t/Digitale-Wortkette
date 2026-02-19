@@ -2,7 +2,7 @@ import logging
 import time
 from logging.handlers import RotatingFileHandler
 
-from flask import Flask, jsonify, request, redirect, url_for, g
+from flask import Flask, jsonify, request, g
 from flask_pyjwt import AuthManager
 from flask_restful import Api
 from flask_swagger import swagger
@@ -10,6 +10,7 @@ from flask_swagger import swagger
 from Config.config import Config
 from Swagger.SwaggerClasses.HomeSpecification import HomeSpecification
 from Swagger.SwaggerClasses.HostSpecification import HostSpecification
+from Swagger.SwaggerClasses.GameStartSpecification import GameStartSpecification
 from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecification
 from Swagger.SwaggerClasses.LobbySpecification import LobbySpecification
 from Swagger.SwaggerClasses.PlayerJoins import PlayerJoins
@@ -29,7 +30,7 @@ handler = RotatingFileHandler(
     encoding=app.config["LOG_ENCODING"],
 )
 # Initializing the Authenticator Manager with the dotenv FilePath
-auth_manager = AuthManager(app,"./Config/.env")
+auth_manager = AuthManager(app, "./Config/.env")
 
 # Set the LogLevel (Level-Severity is defined in the Documentation) for both in the loglevel variable
 loglevel = app.config["LOG_LEVEL"]
@@ -38,8 +39,7 @@ app.logger.setLevel(loglevel)
 
 # Define the Format for Logging
 formatter = logging.Formatter(
-    app.config["LOG_FORMAT"],
-    datefmt=app.config["LOG_DATEFORMAT"]
+    app.config["LOG_FORMAT"], datefmt=app.config["LOG_DATEFORMAT"]
 )
 
 # Set the formatter
@@ -55,7 +55,7 @@ swaggerInfo.setBlueprint()
 # --- Controller Classes ---
 lobbyController = LobbyController()
 playerController = PlayerController(lobbyController)
-gameController = GameController(playerController)
+gameController = GameController(lobbyController)
 
 
 # --- Log incoming requests ---
@@ -85,9 +85,7 @@ def log_response(response):
 @app.errorhandler(Exception)
 def handle_unhandled_exception(e):
     """Log any uncaught exception with traceback"""
-    app.logger.exception(
-        f"Unhandled Exception in {request.method} {request.path}: {e}"
-    )
+    app.logger.exception(f"Unhandled Exception in {request.method} {request.path}: {e}")
     return {"error": "Internal Server Error"}, 500
 
 
@@ -95,17 +93,16 @@ def handle_unhandled_exception(e):
 @app.get("/api/v1/dwk")
 def spec():
     swag = swagger(app, from_file_keyword="swagger_from_file")
-    swag['info']['version'] = "1.0"
-    swag['info']['title'] = "Digitale Wortkette - FlaskAPI"
-    swag['info']['description'] = (
+    swag["info"]["version"] = "1.0"
+    swag["info"]["title"] = "Digitale Wortkette - FlaskAPI"
+    swag["info"]["description"] = (
         "This is the Documentation of the EndpointDefinitions for the Flask-API.\nSome useful links:\n- "
-        "[The Digitale Wortkette Repository](https://github.com/metar00t/Digitale-Wortkette)")
-    swag['info']['contact'] = {
-        "email": "david-paul.adams@outlook.de"
-    }
-    swag['info']['license'] = {
+        "[The Digitale Wortkette Repository](https://github.com/metar00t/Digitale-Wortkette)"
+    )
+    swag["info"]["contact"] = {"email": "david-paul.adams@outlook.de"}
+    swag["info"]["license"] = {
         "name": "Repository License",
-        "url": "https://github.com/metar00t/Digitale-Wortkette/blob/main/LICENSE"
+        "url": "https://github.com/metar00t/Digitale-Wortkette/blob/main/LICENSE",
     }
     return jsonify(swag)
 
@@ -122,20 +119,20 @@ def home():
 
 
 # Endpoint for Creating a new Lobby
-@app.route("/api/v1/dwk/host/host-lobby", methods=['GET', 'POST'])
+@app.route("/api/v1/dwk/host/host-lobby", methods=["GET", "POST"])
 def hostLobby():
     # Create a new Lobby with Default Values
-    if request.method == 'GET':
+    if request.method == "GET":
         return lobbyController.createLobby(auth_manager), 201
     # Updating the created Lobby with chosen Values
-    if request.method == 'POST':
+    if request.method == "POST":
         lobbyController.updateLobby()
     return {"status": "OK"}
 
 
 # Endpoint for exposing the chosen Lobby-Settings for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
-def lobbySettings(lobbyID: int) -> dict[str,int]:
+def lobbySettings(lobbyID: int) -> dict[str, int]:
     return lobbyController.getChosenLobbySettings(lobbyID)
 
 
@@ -147,8 +144,8 @@ def playerList(lobbyID: int):
 
 # Endpoint for joining a Lobby with a given LobbyID
 @app.post("/api/v1/dwk/player/<int:lobbyID>/join")
-def join(lobbyID: int) -> dict[str,str] | dict[str,int]:
-    userID = request.form.get('userID')
+def join(lobbyID: int) -> dict[str, str] | dict[str, int]:
+    userID = request.form.get("userID")
     if lobbyController.isPlayerLimitReached(lobbyID):
         return {"message": "Spielerlimit erreicht"}
     else:
@@ -158,8 +155,8 @@ def join(lobbyID: int) -> dict[str,str] | dict[str,int]:
 # Endpoint for Leaving the Lobby
 @app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
 def leave(lobbyID: int) -> dict[str, str] | None:
-    hostID = request.form.get('hostID')
-    userID = request.form.get('userID')
+    hostID = request.form.get("hostID")
+    userID = request.form.get("userID")
     if int(hostID) == 0:  # Gets called when a Player is leaving
         playerController.removePlayer(lobbyID, int(userID))
         return {"message": f"Lobby #{lobbyID} wurde verlassen"}
@@ -169,35 +166,37 @@ def leave(lobbyID: int) -> dict[str, str] | None:
     return None
 
 
-@app.post("/api/v1/dwk/game/<int:lobbyID>/start")
-def startGame(lobbyID:int):
-    gameController.setGameStatus(lobbyID)
-    return {"message":"OK"}
-
-
-@app.route("/api/v1/dwk/game/<int:lobbyID>/session", methods=['GET', 'POST'])
-def game(lobbyID:int):
-    if request.method == 'GET':
-        return gameController.gameSession()
-    if request.method == 'POST':
-        chosenWord = request.form['wordInput']
-        result = gameController.isInputValid(chosenWord)
+@app.route("/api/v1/dwk/game/<int:lobbyID>/session", methods=["GET", "POST"])
+def game(lobbyID: int):
+    if request.method == "GET":
+        return gameController.gameSession(lobbyID)
+    if request.method == "POST":
+        chosenWord = request.form["wordInput"]
+        # userID = request.form.get("userID")
+        userID = request.form["userID"]
+        result = gameController.isInputValid(chosenWord, lobbyID)
         if result:
-            gameController.addWord(chosenWord)
+            gameController.addWord(chosenWord, lobbyID, int(userID))
             gameController.updateTurnOrder(lobbyID)
-            return gameController.gameSession()
+            return gameController.gameSession(lobbyID)
         else:
-            return {"message":"invalid input"}
+            return {"message": "invalid input"}
     return None  # Temporary Return Statement
 
 
 # Add Resources to Swagger
 swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")
 swaggerInfo.addResource(HostSpecification, "/api/v1/dwk/host/host-lobby")
-swaggerInfo.addResource(LobbySpecification, "/api/v1/dwk/lobby/<int:lobbyID>/playerList")
-swaggerInfo.addResource(LobbySettingSpecification, "/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
+swaggerInfo.addResource(
+    LobbySpecification, "/api/v1/dwk/lobby/<int:lobbyID>/playerList"
+)
+swaggerInfo.addResource(
+    LobbySettingSpecification, "/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings"
+)
 swaggerInfo.addResource(PlayerJoins, "/api/v1/dwk/player/<int:lobbyID>/join")
 swaggerInfo.addResource(PlayerLeaves, "/api/v1/dwk/player/<int:lobbyID>/leave")
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+swaggerInfo.addResource(
+    GameStartSpecification, "/api/v1/dwk/game/<int:lobbyID>/session"
+)
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0")

@@ -22,29 +22,12 @@ responses:
             type: array
             items:
               type: integer
-              enum:
-                [
-                  5,
-                  10,
-                  15,
-                  20,
-                  25,
-                  30,
-                ]
+              enum: [5, 10, 15, 20, 25, 30]
           maxPlayers:
             type: array
             items:
               type: integer
-              enum:
-                [
-                  5,
-                  10,
-                  15,
-                  20,
-                  25,
-                  30,
-                  35,
-                ]
+              enum: [5, 10, 15, 20, 25, 30, 35]
           subjectName:
             type: array
             items:

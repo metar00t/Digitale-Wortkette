@@ -1,7 +1,7 @@
 List of active Lobbies
 ---
 tags:
-  - Lobby
+  - Home
 produces:
   - application/json
 responses:

@@ -1,0 +1,47 @@
+Start Game Session
+---
+tags:
+  - Game
+produces:
+  - application/json
+parameters:
+  - in: path
+    name: lobbyID
+    type: integer
+    required: true
+    description: ID of the Lobby
+responses:
+  200:
+    description: Game started
+    schema:
+      type: object
+      properties:
+        gameID:
+          type: integer
+          default: 1
+          description: gameID
+        chosenSubject:
+          type: string
+          default: Tiere
+          description: The Chosen Subject when creating the Lobby
+        isTimeUp:
+          type: boolean
+          default: false
+        currentLetter:
+          type: string
+          default: l
+          description: Last Letter from the previous Word
+        usedWords:
+          type: array
+          description: List of already used Words
+          items:
+            type: string
+            enum: ["Hello", "Oval"]
+        previousWord:
+          properties:
+            username:
+              type: string
+              default: "John Doe"
+            wordUsed:
+              type: string
+              default: "Oval"

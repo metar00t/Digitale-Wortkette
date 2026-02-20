@@ -1,18 +1,25 @@
+# System Utility Imports
 import logging
 import time
 from logging.handlers import RotatingFileHandler
 
-from flask import Flask, jsonify, request, g
+# Flask Imports
+from flask import Flask, g, jsonify, request
 from flask_pyjwt import AuthManager
 from flask_restful import Api
 from flask_swagger import swagger
 
+# Configuration Imports
 from Config.config import Config
+
+# Swagger Imports
+from Swagger.SwaggerClasses.AddWordSpecification import AddWordSpecification
+from Swagger.SwaggerClasses.GameStartSpecification import \
+    GameStartSpecification
 from Swagger.SwaggerClasses.HomeSpecification import HomeSpecification
 from Swagger.SwaggerClasses.HostSpecification import HostSpecification
-from Swagger.SwaggerClasses.AddWordSpecification import AddWordSpecification
-from Swagger.SwaggerClasses.GameStartSpecification import GameStartSpecification
-from Swagger.SwaggerClasses.LobbySettingSpecification import LobbySettingSpecification
+from Swagger.SwaggerClasses.LobbySettingSpecification import \
+    LobbySettingSpecification
 from Swagger.SwaggerClasses.LobbySpecification import LobbySpecification
 from Swagger.SwaggerClasses.PlayerJoins import PlayerJoins
 from Swagger.SwaggerClasses.PlayerLeaves import PlayerLeaves
@@ -21,7 +28,9 @@ from Sysfiles.Controller.LobbyController import LobbyController
 from Sysfiles.Controller.PlayerController import PlayerController
 from Sysfiles.Controller.SwaggerController import SwaggerDoc
 
+# Initialize Flask as app
 app = Flask(__name__)
+# Apply the Config File to Flask
 app.config.from_object(Config)
 
 # Define the Handler
@@ -86,7 +95,8 @@ def log_response(response):
 @app.errorhandler(Exception)
 def handle_unhandled_exception(e):
     """Log any uncaught exception with traceback"""
-    app.logger.exception(f"Unhandled Exception in {request.method} {request.path}: {e}")
+    app.logger.exception(
+        f"Unhandled Exception in {request.method} {request.path}: {e}")
     return {"error": "Internal Server Error"}, 500
 
 
@@ -112,10 +122,8 @@ def spec():
 @app.get("/api/v1/dwk/home")
 def home():
     if lobbyController.getLobbyList() is None:
-        # app.logger.debug("No Lobbies created")
         return {}, 204
     else:
-        # app.logger.debug("Lobbies found")
         return lobbyController.getLobbyList(), 200
 
 
@@ -174,17 +182,15 @@ def game(lobbyID: int):
         return gameController.gameSession(lobbyID)
     if request.method == "POST":
         chosenWord = request.form["wordInput"]
-        # TODO: Uncomment Line 178 in Prod and comment Line 179 out
-        # userID = request.form.get("userID")
-        userID = request.form["userID"]
-        result = gameController.isInputValid(chosenWord, lobbyID)
-        if result:
+        userID = request.form.get("userID")
+        if gameController.isInputValid(chosenWord, lobbyID):
             gameController.addWord(chosenWord, lobbyID, int(userID))
+            # TODO: Implement TurnOrder Changes into the Payload (gameController.gameSession(lobbyID))
             gameController.updateTurnOrder(lobbyID)
             return gameController.gameSession(lobbyID)
         else:
             return {"message": "invalid input"}, 418
-    return None  # Temporary Return Statement
+    return None
 
 
 # Add Resources to Swagger
@@ -201,6 +207,9 @@ swaggerInfo.addResource(PlayerLeaves, "/api/v1/dwk/player/<int:lobbyID>/leave")
 swaggerInfo.addResource(
     GameStartSpecification, "/api/v1/dwk/game/<int:lobbyID>/session"
 )
-swaggerInfo.addResource(AddWordSpecification, "/api/v1/dwk/game/<int:lobbyID>/session")
+swaggerInfo.addResource(AddWordSpecification,
+                        "/api/v1/dwk/game/<int:lobbyID>/session")
+
+# Launches the Application by their FileName
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

@@ -60,7 +60,7 @@ class GameController:
 
         entry["timer_running"] = True
 
-        def countdown():
+        def countdown():  # TODO: Funktion auslagern als Hilfsfunktion und mit dem entry Wert als Parameter mitgeben
             while entry["game"].getTime() > 0 and entry["timer_running"]:
                 mins, secs = divmod(entry["game"].getTime(), 60)
                 time.sleep(1)
@@ -108,12 +108,13 @@ class GameController:
         return {
             "gameID": game.getGameID(),
             "chosenSubject": (
-                lobby_data.get("subjectName", "Default") if lobby_data else "Default"
+                lobby_data.get(  # TODO: Use Constants for "Default" Values
+                    "subjectName", "Default") if lobby_data else "Default"
             ),
             "isTimeUp": game.getIsTimeUp(),
             "time": game.getTime(),
             "currentLetter": recentWord[-1:],
-            "usedWords": [
+            "usedWords": [  # TODO: Erklärenden Kommentar setzen, um diese Zeile Code zu erklären
                 entry["word"] if isinstance(entry, dict) else entry
                 for entry in wordList
             ],
@@ -126,15 +127,17 @@ class GameController:
         wordList = entry["wordList"]
 
         chosenWord = chosenWord.strip()
+        # No Whitespace allowed :(
         if not chosenWord:
             return False
+
+        # applies to the first round (Host starts the game)
+        if not wordList:
+            return True
 
         # Handle dict format: extract "word" from each entry
         if chosenWord.lower() in (entry["word"].lower() for entry in wordList):
             return False
-
-        if not wordList:
-            return True
 
         # Get the actual word from the dict
         previousWord = wordList[-1]["word"]
@@ -149,6 +152,7 @@ class GameController:
 
         entry["wordList"].append({"word": word, "username": username})
 
+        # TODO: Mit FrontEnd über den Ablauf / die Verarbeitung der Reihenfolge absprechen bzw. den Rückgabewert in die Payload einbinden.
     def updateTurnOrder(self, lobbyID: int):
         """Update turn order for a specific lobby."""
         gamePlayerList = self.lobbyController.getListOfPlayers(lobbyID)

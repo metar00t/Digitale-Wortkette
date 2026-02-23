@@ -9,6 +9,7 @@ class GameController:
         self.lobbyController = lobbyController
         # List of dicts: {"lobbyID": int, "game": Game, "wordList": list, "timer_running": bool}
         self.gameList = []
+        self.turnOrder = []
 
     def get_game_entry(self, lobbyID):
         """Helper to get or create a game entry for a lobbyID."""
@@ -78,6 +79,8 @@ class GameController:
         """Get game session for a lobby, creating if needed."""
         entry = self.get_game_entry(lobbyID)
 
+        self.setStartingTurnOrder(lobbyID)
+
         # Start timer only if not running
         if not entry["timer_running"]:
             self.timer(lobbyID)
@@ -113,6 +116,7 @@ class GameController:
             ),
             "isTimeUp": game.getIsTimeUp(),
             "time": game.getTime(),
+            "turnOrder": self.getTurnOrder(),
             "currentLetter": recentWord[-1:],
             "usedWords": [  # TODO: Erklärenden Kommentar setzen, um diese Zeile Code zu erklären
                 entry["word"] if isinstance(entry, dict) else entry
@@ -152,14 +156,18 @@ class GameController:
 
         entry["wordList"].append({"word": word, "username": username})
 
+    def setStartingTurnOrder(self, lobbyID: int):
+        self.turnOrder = self.lobbyController.getListOfPlayers(lobbyID)
+
+    def getTurnOrder(self):
+        return self.turnOrder
+
         # TODO: Mit FrontEnd über den Ablauf / die Verarbeitung der Reihenfolge absprechen bzw. den Rückgabewert in die Payload einbinden.
-    def updateTurnOrder(self, lobbyID: int):
+    def updateTurnOrder(self):
         """Update turn order for a specific lobby."""
-        gamePlayerList = self.lobbyController.getListOfPlayers(lobbyID)
-        gamePlayerList.append(
-            gamePlayerList.pop(gamePlayerList.index(gamePlayerList[0]))
+        self.turnOrder.append(
+            self.turnOrder.pop(self.turnOrder.index(self.turnOrder[0]))
         )
-        return gamePlayerList
 
     # remove Game Entries when Lobby closes
     def removeGame(self, lobbyID: int) -> bool:

@@ -186,7 +186,7 @@ def game(lobbyID: int):
         if gameController.isInputValid(chosenWord, lobbyID):
             gameController.addWord(chosenWord, lobbyID, int(userID))
             # TODO: Implement TurnOrder Changes into the Payload (gameController.gameSession(lobbyID))
-            gameController.updateTurnOrder(lobbyID)
+            gameController.updateTurnOrder()
             return gameController.gameSession(lobbyID)
         else:
             return {"message": "invalid input"}, 418

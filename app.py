@@ -148,6 +148,7 @@ def lobbySettings(lobbyID: int) -> dict[str, int]:
 # Endpoint for exposing the current Playerlist for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
 def playerList(lobbyID: int):
+    gameController.setStartingTurnOrder(lobbyID)
     return lobbyController.getListOfPlayers(lobbyID)
 
 
@@ -185,7 +186,6 @@ def game(lobbyID: int):
         userID = request.form.get("userID")
         if gameController.isInputValid(chosenWord, lobbyID):
             gameController.addWord(chosenWord, lobbyID, int(userID))
-            # TODO: Implement TurnOrder Changes into the Payload (gameController.gameSession(lobbyID))
             gameController.updateTurnOrder()
             return gameController.gameSession(lobbyID)
         else:

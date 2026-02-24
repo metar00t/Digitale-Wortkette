@@ -2,6 +2,7 @@ import threading
 import time
 
 from Sysfiles.Model.Game import Game
+from Sysfiles.Helper.Helper import Helper
 
 
 class GameController:
@@ -10,6 +11,7 @@ class GameController:
         # List of dicts: {"lobbyID": int, "game": Game, "wordList": list, "timer_running": bool}
         self.gameList = []
         self.turnOrder = []
+        self.helper = Helper()
 
     def get_game_entry(self, lobbyID):
         """Helper to get or create a game entry for a lobbyID."""
@@ -61,13 +63,7 @@ class GameController:
 
         entry["timer_running"] = True
 
-        def countdown():  # TODO: Funktion auslagern als Hilfsfunktion und mit dem entry Wert als Parameter mitgeben
-            while entry["game"].getTime() > 0 and entry["timer_running"]:
-                mins, secs = divmod(entry["game"].getTime(), 60)
-                time.sleep(1)
-                entry["game"].setTime(entry["game"].getTime() - 1)
-            entry["timer_running"] = False
-            entry["game"].callbackTimer()
+        self.helper.countdown(entry)
 
         # Start in a daemon thread
         timer_thread = threading.Thread(target=countdown, daemon=True)
@@ -76,10 +72,8 @@ class GameController:
         return {"message": "Timer started"}
 
     def gameSession(self, lobbyID):
-        """Get game session for a lobby, creating if needed."""
+        """Get game session for a lobby, creating a new game session if needed."""
         entry = self.get_game_entry(lobbyID)
-
-        self.setStartingTurnOrder(lobbyID)
 
         # Start timer only if not running
         if not entry["timer_running"]:
@@ -162,7 +156,6 @@ class GameController:
     def getTurnOrder(self):
         return self.turnOrder
 
-        # TODO: Mit FrontEnd über den Ablauf / die Verarbeitung der Reihenfolge absprechen bzw. den Rückgabewert in die Payload einbinden.
     def updateTurnOrder(self):
         """Update turn order for a specific lobby."""
         self.turnOrder.append(

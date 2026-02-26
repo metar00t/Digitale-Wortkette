@@ -3,10 +3,24 @@ import time
 
 class Helper:
 
-    def countdown(self, entry):
-        while entry["game"].getTime() > 0 and entry["timer_running"]:
-            mins, secs = divmod(entry["game"].getTime(), 60)
+    def __init__(self):
+        self.entry = None
+
+    def setEntry(self, entry):
+        """
+        Sets the Entry Object for further Processing
+        :param entry: Entry Dictionary
+        :type entry: dict
+        """
+        self.entry = entry
+
+    def countdown(self):
+        """
+        Countdown Method for handling the Time left in the Game-Session
+        """
+        while self.entry["game"].getTime() > 0 and self.entry["timer_running"]:
+            mins, secs = divmod(self.entry["game"].getTime(), 60)
             time.sleep(1)
-            entry["game"].setTime(entry["game"].getTime() - 1)
-        entry["timer_running"] = False
-        entry["game"].callbackTimer()
+            self.entry["game"].setTime(self.entry["game"].getTime() - 1)
+        self.entry["timer_running"] = False
+        self.entry["game"].callbackTimer()

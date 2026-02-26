@@ -63,16 +63,29 @@ class GameController:
 
         entry["timer_running"] = True
 
-        self.helper.countdown(entry)
+        self.helper.setEntry(entry)
+        self.helper.countdown()
 
         # Start in a daemon thread
-        timer_thread = threading.Thread(target=countdown, daemon=True)
+        timer_thread = threading.Thread(
+            target=self.helper.countdown, daemon=True)
         timer_thread.start()
 
         return {"message": "Timer started"}
 
+    def setStartingTurnOrder(self, lobbyID: int):
+        self.turnOrder = self.lobbyController.getListOfPlayers(lobbyID)
+
+    def getTurnOrder(self):
+        return self.turnOrder
+
     def gameSession(self, lobbyID):
         """Get game session for a lobby, creating a new game session if needed."""
+        # Constants for Default Fallback Values
+        __DEFAULT_SUBJECTNAME__: str = "Tiere"
+        __DEFAULT_USERNAME__: str = "Unbekannt"
+        __DEFAULT_WORDENTRY__: str = ""
+
         entry = self.get_game_entry(lobbyID)
 
         # Start timer only if not running
@@ -92,28 +105,31 @@ class GameController:
 
         # Handle both old string entries and new dict entries
         if recentWordEntry is None:
-            recentWord = ""
-            username = ""
+            recentWord = __DEFAULT_WORDENTRY__
+            username = __DEFAULT_USERNAME__
         elif isinstance(recentWordEntry, dict):
             # get dict with "word" and "username"
             recentWord = recentWordEntry["word"]
             username = recentWordEntry["username"]
         else:
-            recentWord = ""
-            username = "Unknown"
+            recentWord = __DEFAULT_WORDENTRY__
+            username = __DEFAULT_USERNAME__
 
         return {
             "gameID": game.getGameID(),
             "chosenSubject": (
-                lobby_data.get(  # TODO: Use Constants for "Default" Values
-                    "subjectName", "Default") if lobby_data else "Default"
+                lobby_data.get(
+                    "subjectName", __DEFAULT_SUBJECTNAME__) if lobby_data else __DEFAULT_SUBJECTNAME__
             ),
             "isTimeUp": game.getIsTimeUp(),
             "time": game.getTime(),
             "turnOrder": self.getTurnOrder(),
             "currentLetter": recentWord[-1:],
-            "usedWords": [  # TODO: Erklärenden Kommentar setzen, um diese Zeile Code zu erklären
-                entry["word"] if isinstance(entry, dict) else entry
+            "usedWords": [  # Conditional Expression for extracting the value associated with the key
+                {
+                    "word": entry["word"] if isinstance(entry, dict) else entry,
+                    "username": entry["username"] if isinstance(entry, dict) else None
+                }
                 for entry in wordList
             ],
             "previousWord": {"username": username, "wordUsed": recentWord},
@@ -149,12 +165,6 @@ class GameController:
         username = player if player else "Unknown"
 
         entry["wordList"].append({"word": word, "username": username})
-
-    def setStartingTurnOrder(self, lobbyID: int):
-        self.turnOrder = self.lobbyController.getListOfPlayers(lobbyID)
-
-    def getTurnOrder(self):
-        return self.turnOrder
 
     def updateTurnOrder(self):
         """Update turn order for a specific lobby."""

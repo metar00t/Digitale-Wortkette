@@ -118,7 +118,7 @@ def spec():
     return jsonify(swag)
 
 
-# Entrypoint
+# Entrypoint for listing the active Lobbies
 @app.get("/api/v1/dwk/home")
 def home():
     if lobbyController.getLobbyList() is None:
@@ -187,10 +187,18 @@ def game(lobbyID: int):
         if gameController.isInputValid(chosenWord, lobbyID):
             gameController.addWord(chosenWord, lobbyID, int(userID))
             gameController.updateTurnOrder()
-            return gameController.gameSession(lobbyID)
+            return {"message": "Input Valid"}
         else:
             return {"message": "invalid input"}, 418
     return None
+
+# Skip Player on local Timeout
+
+
+@app.get("/api/v1/dwk/game/<int:lobbyID>/skip")
+def skip(lobbyID: int):
+    gameController.updateTurnOrder()
+    return {"message": "Successfully Skipped Player"}
 
 
 # Add Resources to Swagger

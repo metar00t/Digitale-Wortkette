@@ -1,22 +1,48 @@
 # Digitale-Wortkette
-Dieses Projekt wird für die Kommunikation mit dem Frontend Flutter in dem folgendem [Repository](https://github.com/Manofward/Flutter) genutzt.
-Die Nutzung des Backends erfolgt durch die Composer Datei, nachdem dieses Repository geklont wurde, um die Docker-Datei auszuführen.
+[![Spelling](https://github.com/metar00t/README/actions/workflows/spelling.yml/badge.svg)(https://github.com/metar00t/README/actions/workflows/spelling.yml)]
 
-## Index:
-- [Technologien](#technologien)
-- [Benötigte Bibliotheken](#benötigte-bibliotheken--version-die-benötigt-werden)
+> Dieses Projekt wurde während der Ausbildung zum Fachinformatiker: Fachrichtung Anwendungsentwicklung erstellt.
 
-## Technologien:
+
+## ℹ️ Übersicht
+Dieses Projekt dient als Backend-Server für die Kommunikation mit der dazugehörigen App. Hierzu die [Repository-Verlinkung](https://github.com/Manofward/Frontend_DigitaleWortkette/tree/main?tab=contributing-ov-file) zum Frontend.
+
+### ✍️ Author
+Ich bin [Metar00t](https://github.com/metar00t) und habe das Backend für die App "Digitale Wortkette" geschrieben.
+
+## 🚀 Nutzung
+Zum Hochfahren des Docker Images:
+```bash
+docker compose up -d
+```
+Zum Herunterfahren des Docker Images:
+```bash
+docker compose down -d
+```
+
+## ⬇️ Installation
+1. Repository klonen:
+```bash
+git clone https://github.com/metar00t/Digitale-Wortkette.git
+```
+2. In das geklonte Verzeichnis springen:
+```bash
+cd Digitale-Wortkette/
+```
+3. Docker Container erstellen und ausführen:
+```bash
+docker compose up -d
+```
+
+
+## 💭 Feedback und Beitrag
+Feedback und Bugreports sind gerne willkommen!
+Diese können im Issues Reiter sinngemäß gemeldet werden. 
+
+Du möchtest gerne zur Repository beitragen? Dann schau mal in [CONTRIBUTING](./CONTRIBUTING.md) rein!
+
+## Technologien die Verwendet werden:
 - REST-API (Flask)
 - Webserver (Werkzeug)
 - Docker
 - API-Endpoint Dokumentation mit Swagger
-
-## Benötigte Bibliotheken (und Version) für [Docker](requirements.txt):
-- flask-pyjwt~=1.0.0
-- Flask~=3.1.2
-- Flask-RESTful~=0.3.10
-- flask-swagger~=0.2.14
-- qrcode~=8.2
-- django-qrcode~=0.3
-- flask-swagger-ui~=5.21.0

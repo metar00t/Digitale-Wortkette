@@ -3,9 +3,9 @@ import logging
 import time
 from logging.handlers import RotatingFileHandler
 
-# Flask Imports
+# Imported Libraries
 from flask import Flask, g, jsonify, request
-from flask_pyjwt import AuthManager
+from flask_pyjwt import AuthManager, require_token
 from flask_restful import Api
 from flask_swagger import swagger
 
@@ -128,6 +128,7 @@ def home():
 
 
 # Endpoint for Creating a new Lobby
+# TODO: Setup a Token Authenticator for checking if the User is the Host
 @app.route("/api/v1/dwk/host/host-lobby", methods=["GET", "POST"])
 def hostLobby():
     # Create a new Lobby with Default Values
@@ -193,6 +194,7 @@ def game(lobbyID: int):
     return None
 
 # Skip Player on local Timeout
+# TODO: Set to where only players with a token can use this
 
 
 @app.get("/api/v1/dwk/game/<int:lobbyID>/skip")

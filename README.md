@@ -1,5 +1,5 @@
 # Digitale-Wortkette
-[![Spelling](https://github.com/metar00t/README/actions/workflows/spelling.yml/badge.svg)(https://github.com/metar00t/README/actions/workflows/spelling.yml)]
+[![Check Spelling](https://github.com/metar00t/Digitale-Wortkette/actions/workflows/spelling.yml/badge.svg?branch=dev)](https://github.com/metar00t/Digitale-Wortkette/actions/workflows/spelling.yml)
 
 > Dieses Projekt wurde während der Ausbildung zum Fachinformatiker: Fachrichtung Anwendungsentwicklung erstellt.
 

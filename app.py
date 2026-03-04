@@ -128,26 +128,29 @@ def home():
 
 
 # Endpoint for Creating a new Lobby
-# TODO: Setup a Token Authenticator for checking if the User is the Host
-@app.route("/api/v1/dwk/host/host-lobby", methods=["GET", "POST"])
-def hostLobby():
-    # Create a new Lobby with Default Values
-    if request.method == "GET":
-        return lobbyController.createLobby(auth_manager), 201
-    # Updating the created Lobby with chosen Values
-    if request.method == "POST":
-        lobbyController.updateLobby()
+@app.get("/api/v1/dwk/host/host-lobby")
+def createLobby():
+    return lobbyController.createLobby(auth_manager), 201
+
+
+@app.post("/api/v1/dwk/host/host-lobby")
+@require_token()
+def updateLobby():
+    lobbyController.updateLobby()
     return {"status": "OK"}
 
-
 # Endpoint for exposing the chosen Lobby-Settings for a specified LobbyID
+
+
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
+# @require_token()
 def lobbySettings(lobbyID: int) -> dict[str, int]:
     return lobbyController.getChosenLobbySettings(lobbyID)
 
 
 # Endpoint for exposing the current Playerlist for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/playerList")
+# @require_token()
 def playerList(lobbyID: int):
     gameController.setStartingTurnOrder(lobbyID)
     return lobbyController.getListOfPlayers(lobbyID)
@@ -165,6 +168,7 @@ def join(lobbyID: int) -> dict[str, str] | dict[str, int]:
 
 # Endpoint for Leaving the Lobby
 @app.post("/api/v1/dwk/player/<int:lobbyID>/leave")
+@require_token()
 def leave(lobbyID: int) -> dict[str, str] | None:
     hostID = request.form.get("hostID")
     userID = request.form.get("userID")
@@ -178,26 +182,28 @@ def leave(lobbyID: int) -> dict[str, str] | None:
 
 
 # Endpoint for the Game Logic
-@app.route("/api/v1/dwk/game/<int:lobbyID>/session", methods=["GET", "POST"])
-def game(lobbyID: int):
-    if request.method == "GET":
-        return gameController.gameSession(lobbyID)
-    if request.method == "POST":
-        chosenWord = request.form["wordInput"]
-        userID = request.form.get("userID")
-        if gameController.isInputValid(chosenWord, lobbyID):
-            gameController.addWord(chosenWord, lobbyID, int(userID))
-            gameController.updateTurnOrder()
-            return {"message": "Input Valid"}
-        else:
-            return {"message": "invalid input"}, 418
-    return None
+@app.get("/api/v1/dwk/game/<int:lobbyID>/session")
+def getGame(lobbyID: int):
+    return gameController.gameSession(lobbyID)
+
+
+@app.post("/api/v1/dwk/game/<int:lobbyID>/session")
+@require_token()
+def postGame(lobbyID: int):
+    chosenWord = request.form["wordInput"]
+    userID = request.form.get("userID")
+    if gameController.isInputValid(chosenWord, lobbyID):
+        gameController.addWord(chosenWord, lobbyID, int(userID))
+        gameController.updateTurnOrder()
+        return {"message": "Input Valid"}
+    else:
+        return {"message": "invalid input"}, 418
 
 # Skip Player on local Timeout
-# TODO: Set to where only players with a token can use this
 
 
 @app.get("/api/v1/dwk/game/<int:lobbyID>/skip")
+@require_token()
 def skip(lobbyID: int):
     gameController.updateTurnOrder()
     return {"message": "Successfully Skipped Player"}

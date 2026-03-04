@@ -26,12 +26,13 @@ class LobbyController:
         self.lobby = Lobby()
         self.host = Host()
         self.player = Player()
-        self.qr = QrCodeController(f"dwk://player/{self.lobby.getLobbyID()}/join")
+        self.qr = QrCodeController(
+            f"dwk://player/{self.lobby.getLobbyID()}/join")
         auth_token = auth_manager_object.auth_token(
-            subject= self.host.getUserID(),
+            subject=str(self.host.getUserID),
             scope={"Host": True}
         )
-        createdLobby : dict[str,int] = {
+        createdLobby: dict[str, int] = {
             "lobbyID": self.lobby.getLobbyID(),
             "hasGameStarted": False,
             "subjectName": [
@@ -63,13 +64,13 @@ class LobbyController:
             "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}"),
             "userID": self.host.getUserID()
         }
-        host : dict[str,int] = {
+        host: dict[str, int] = {
             "lobbyID": self.lobby.getLobbyID(),
             "userID": self.host.getUserID(),
             "hostID": int(f"{self.lobby.getLobbyID()}0{self.host.getUserID()}{self.host.getHostID()}"),
             "username": "Host",
             "isPlayerReady": "true",
-            "auth_token" : auth_token.signed
+            "auth_token": auth_token.signed
         }
         self.playerList.append(host)
         self.createdLobbies.append(createdLobby)

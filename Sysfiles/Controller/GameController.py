@@ -55,7 +55,7 @@ class GameController:
             return {"message": "Lobby not found"}
 
         # Convert minutes to seconds
-        max_length = int(lobby_data.get("maxGameLength")) * 60
+        max_length = int(lobby_data.get("maxGameLength")[0]) * 60
         entry["game"].setTime(max_length)
 
         if entry["timer_running"]:

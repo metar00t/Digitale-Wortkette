@@ -28,8 +28,8 @@ class PlayerController:
         self.player.setStatus(isPlayerReady)
         doesPlayerExists: bool = self.hasPlayer(userID, lobbyID)
         auth_token = auth_manager_object.auth_token(
-            subject=self.player.getUserID(),
-            scope={"Host":False},
+            subject=str(self.player.getUserID),
+            scope={"Host": False},
         )
         if doesPlayerExists:
             return self.updatePlayer(lobbyID, userID, username, isPlayerReady)

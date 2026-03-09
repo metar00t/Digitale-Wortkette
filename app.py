@@ -140,8 +140,6 @@ def updateLobby():
     return {"status": "OK"}
 
 # Endpoint for exposing the chosen Lobby-Settings for a specified LobbyID
-
-
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
 # @require_token()
 def lobbySettings(lobbyID: int) -> dict[str, int]:
@@ -200,8 +198,6 @@ def postGame(lobbyID: int):
         return {"message": "invalid input"}, 418
 
 # Skip Player on local Timeout
-
-
 @app.get("/api/v1/dwk/game/<int:lobbyID>/skip")
 @require_token()
 def skip(lobbyID: int):

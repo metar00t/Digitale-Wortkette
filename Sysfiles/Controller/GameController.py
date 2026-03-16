@@ -172,11 +172,46 @@ class GameController:
             self.turnOrder.pop(self.turnOrder.index(self.turnOrder[0]))
         )
 
-    # remove Game Entries when Lobby closes
-    def removeGame(self, lobbyID: int) -> bool:
-        """Remove game entry for a lobby (e.g., when lobby closes)."""
-        for i, entry in enumerate(self.gameList):
-            if entry["lobbyID"] == lobbyID:
-                del self.gameList[i]
-                return True
-        return False
+    from collections import Counter
+
+    def getGameStats(self, lobbyID: int) -> dict:
+        """
+        Compute game statistics for a specific lobby.
+        Returns a dictionary with:
+        - words per player
+        - total words
+        - longest word(s)
+        - shortest word(s)
+        - player(s) with most words
+        """
+        entry = self.get_game_entry(lobbyID)
+        wordList = entry["wordList"]
+    
+        # Count words per player
+        playerCounts = Counter(item["username"] for item in wordList)
+    
+        # Total number of words
+        totalWords = len(wordList)
+    
+        # Longest word(s)
+        longestWordLength = max((len(item["word"]) for item in wordList), default=0)
+        longestWords = [item["word"] for item in wordList if len(item["word"]) == longestWordLength]
+    
+        # Shortest word(s)
+        shortestWordLength = min((len(item["word"]) for item in wordList), default=0)
+        shortestWords = [item["word"] for item in wordList if len(item["word"]) == shortestWordLength]
+    
+        # Player(s) with most words
+        if playerCounts:
+            maxCount = max(playerCounts.values())
+            mostWordsPlayers = [username for username, count in playerCounts.items() if count == maxCount]
+        else:
+            mostWordsPlayers = []
+    
+        return {
+            "wordsPerPlayer": dict(playerCounts),
+            "totalWords": totalWords,
+            "longestWords": longestWords,
+            "shortestWords": shortestWords,
+            "mostWordsPlayers": mostWordsPlayers
+        }

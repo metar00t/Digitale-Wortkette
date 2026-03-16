@@ -204,6 +204,12 @@ def skip(lobbyID: int):
     gameController.updateTurnOrder()
     return {"message": "Successfully Skipped Player"}
 
+# Gameresult Page
+@app.get("/api/v1/dwk/game/<int:lobbyID>/result")
+@require_token()
+def result(lobbyID: int):
+    return gameController.getGameStats(lobbyID)
+
 
 # Add Resources to Swagger
 swaggerInfo.addResource(HomeSpecification, "/api/v1/dwk/home")

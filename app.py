@@ -11,7 +11,6 @@ from flask_swagger import swagger
 
 # Configuration Imports
 from Config.config import Config
-
 # Swagger Imports
 from Swagger.SwaggerClasses.AddWordSpecification import AddWordSpecification
 from Swagger.SwaggerClasses.GameStartSpecification import \
@@ -139,6 +138,7 @@ def updateLobby():
     lobbyController.updateLobby()
     return {"status": "OK"}
 
+
 # Endpoint for exposing the chosen Lobby-Settings for a specified LobbyID
 @app.get("/api/v1/dwk/lobby/<int:lobbyID>/lobbySettings")
 # @require_token()
@@ -197,12 +197,14 @@ def postGame(lobbyID: int):
     else:
         return {"message": "invalid input"}, 418
 
+
 # Skip Player on local Timeout
 @app.get("/api/v1/dwk/game/<int:lobbyID>/skip")
 @require_token()
 def skip(lobbyID: int):
     gameController.updateTurnOrder()
     return {"message": "Successfully Skipped Player"}
+
 
 # Gameresult Page
 @app.get("/api/v1/dwk/game/<int:lobbyID>/result")

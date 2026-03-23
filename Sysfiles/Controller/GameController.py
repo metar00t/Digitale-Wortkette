@@ -1,8 +1,8 @@
 import threading
-import time
+from collections import Counter
 
-from Sysfiles.Model.Game import Game
 from Sysfiles.Helper.Helper import Helper
+from Sysfiles.Model.Game import Game
 
 
 class GameController:
@@ -172,8 +172,6 @@ class GameController:
             self.turnOrder.pop(self.turnOrder.index(self.turnOrder[0]))
         )
 
-    from collections import Counter
-
     def getGameStats(self, lobbyID: int) -> dict:
         """
         Compute game statistics for a specific lobby.
@@ -184,32 +182,90 @@ class GameController:
         - shortest word(s)
         - player(s) with most words
         """
+
         entry = self.get_game_entry(lobbyID)
         wordList = entry["wordList"]
-    
+
+        # Normalize all entries to dicts with word + username
+        normalizedWords = self.helper.normalize_word_list(wordList)
+
+        # ----------------------------
         # Count words per player
-        playerCounts = Counter(item["username"] for item in wordList)
-    
+        # ----------------------------
+        playerCounts = Counter(
+            item["username"] for item in normalizedWords if item["username"] is not None
+        )
+
+        wordsPerPlayer = [
+            {"username": username, "count": count}
+            for username, count in playerCounts.items()
+        ]
+
+        # ----------------------------
         # Total number of words
-        totalWords = len(wordList)
-    
-        # Longest word(s)
-        longestWordLength = max((len(item["word"]) for item in wordList), default=0)
-        longestWords = [item["word"] for item in wordList if len(item["word"]) == longestWordLength]
-    
-        # Shortest word(s)
-        shortestWordLength = min((len(item["word"]) for item in wordList), default=0)
-        shortestWords = [item["word"] for item in wordList if len(item["word"]) == shortestWordLength]
-    
-        # Player(s) with most words
+        # ----------------------------
+        totalWords = len(normalizedWords)
+
+        # ----------------------------
+        # Longest word(s) (tie-aware)
+        # ----------------------------
+        maxLength = max((len(item["word"]) for item in normalizedWords), default=0)
+        longestEntries = [item for item in normalizedWords if len(item["word"]) == maxLength]
+        playersWithLongestWords = sorted({item["username"] for item in longestEntries})
+
+        if len(playersWithLongestWords) == 1:
+            longestWords = [{
+                "username": playersWithLongestWords[0],
+                "words": [item["word"] for item in longestEntries]
+            }]
+        else:
+            longestWords = [
+                {
+                    "username": player,
+                    "words": [item["word"] for item in longestEntries if item["username"] == player]
+                }
+                for player in playersWithLongestWords
+            ]
+
+        # ----------------------------
+        # Shortest word(s) (tie-aware)
+        # ----------------------------
+        minLength = min((len(item["word"]) for item in normalizedWords), default=0)
+        shortestEntries = [item for item in normalizedWords if len(item["word"]) == minLength]
+        playersWithShortestWords = sorted({item["username"] for item in shortestEntries})
+
+        if len(playersWithShortestWords) == 1:
+            shortestWords = [{
+                "username": playersWithShortestWords[0],
+                "words": [item["word"] for item in shortestEntries]
+            }]
+        else:
+            shortestWords = [
+                {
+                    "username": player,
+                    "words": [item["word"] for item in shortestEntries if item["username"] == player]
+                }
+                for player in playersWithShortestWords
+            ]
+
+        # ----------------------------
+        # Player(s) with most words (tie-aware)
+        # ----------------------------
         if playerCounts:
             maxCount = max(playerCounts.values())
-            mostWordsPlayers = [username for username, count in playerCounts.items() if count == maxCount]
+            mostWordsPlayers = [
+                {"username": username, "count": count}
+                for username, count in sorted(playerCounts.items())
+                if count == maxCount
+            ]
         else:
-            mostWordsPlayers = []
-    
+            mostWordsPlayers = {"username": None, "count": 0}
+
+        # ----------------------------
+        # Return all stats
+        # ----------------------------
         return {
-            "wordsPerPlayer": dict(playerCounts),
+            "wordsPerPlayer": wordsPerPlayer,
             "totalWords": totalWords,
             "longestWords": longestWords,
             "shortestWords": shortestWords,

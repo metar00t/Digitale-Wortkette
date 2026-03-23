@@ -38,10 +38,13 @@ class LobbyController:
             "subjectName": [
                 "Tiere",
                 "Städte",
+                "Länder",
                 "Flüsse",
                 "Programmiersprachen",
-                "IDE",
-                "Hardware"
+                "Hardware",
+                "Fabelwesen",
+                "Sportarten",
+                "Sonstige (Freies Thema)"
             ],
             "generatedQRCode": self.qr.generateQrCode(),
             "maxPlayers": [
@@ -50,8 +53,6 @@ class LobbyController:
                 15,
                 20,
                 25,
-                30,
-                35
             ],
             "maxGameLength": [
                 5,
@@ -141,7 +142,8 @@ class LobbyController:
             lobbyInfo = {
                 "lobbyID": data["lobbyID"],
                 "subjectName": data["subjectName"],
-                "maxPlayers": data["maxPlayers"]
+                "maxPlayers": data["maxPlayers"],
+                "hasGameStarted": data["hasGameStarted"],
             }
             lobbyList.append(lobbyInfo)
         if self.lobby is None or not lobbyList:

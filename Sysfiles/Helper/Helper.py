@@ -24,3 +24,18 @@ class Helper:
             self.entry["game"].setTime(self.entry["game"].getTime() - 1)
         self.entry["timer_running"] = False
         self.entry["game"].callbackTimer()
+
+    def normalize_word_list(self, wordList: list) -> list:
+        """
+        Normalize wordList so every entry has the structure:
+        {"word": str, "username": str}
+        """
+        __DEFAULT_USERNAME__ = "Unbekannt"
+
+        return [
+            {
+                "word": item["word"] if isinstance(item, dict) else item,
+                "username": item["username"] if isinstance(item, dict) else __DEFAULT_USERNAME__
+            }
+            for item in wordList
+        ]
